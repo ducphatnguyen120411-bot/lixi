@@ -3,95 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧧 Lì Xì Tết Ất Tỵ 2026 🧧</title>
-    
+    <title>🧧 Lì Xì Tết 2026 - Duy Nhất 1 Lần 🧧</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    
     <style>
-        :root {
-            --gold: #f1c40f;
-            --red-tet: #d63031;
-            --glass: rgba(15, 15, 15, 0.95);
-        }
-
-        body {
-            margin: 0; background: #0a0a0a; color: white;
-            font-family: 'Montserrat', sans-serif; display: flex;
-            justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
-        }
-
+        :root { --gold: #f1c40f; --red: #d63031; --glass: rgba(15, 15, 15, 0.95); }
+        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
-
-        .premium-card {
-            position: relative; z-index: 10; width: 350px;
-            background: var(--glass); backdrop-filter: blur(20px);
-            border: 2px solid var(--gold); border-radius: 30px;
-            padding: 30px; text-align: center;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-        }
-
+        .premium-card { position: relative; z-index: 10; width: 350px; background: var(--glass); backdrop-filter: blur(20px); border: 2px solid var(--gold); border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
         .title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--gold); margin: 0; }
-        .sub-title { font-size: 0.7rem; letter-spacing: 4px; color: #888; margin-bottom: 25px; font-weight: 800; }
-
-        #step-name { animation: fadeIn 0.5s; }
-        .input-box {
-            background: rgba(255,255,255,0.05); border: 1.5px solid var(--gold);
-            padding: 15px; border-radius: 15px; color: white; width: 85%;
-            text-align: center; font-size: 1.1rem; font-weight: 600; outline: none; margin-bottom: 20px;
-        }
-        .btn-confirm {
-            background: var(--gold); color: #000; border: none; padding: 12px 40px;
-            border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s;
-        }
-
-        #step-lixi { display: none; }
+        .input-box { background: rgba(255,255,255,0.05); border: 1.5px solid var(--gold); padding: 15px; border-radius: 15px; color: white; width: 85%; text-align: center; font-size: 1.1rem; outline: none; margin-bottom: 20px; }
+        .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 40px; border-radius: 10px; font-weight: 800; cursor: pointer; }
         
-        /* GIAO DIỆN BAO LÌ XÌ MỚI */
-        .envelope-wrapper {
-            position: relative; width: 180px; height: 260px; margin: 20px auto;
-            cursor: pointer; transition: 0.5s;
-        }
-
-        .envelope-img {
-            width: 100%; height: 100%;
-            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg');
-            background-size: cover; background-position: center;
-            border-radius: 15px; z-index: 5; position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            transition: 0.5s;
-        }
-
-        .money-card {
-            position: absolute; top: 10%; left: 5%; width: 90%; height: 80%;
-            background: #fff; border-radius: 10px; color: #222;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; transition: 0.8s ease-out; z-index: 1;
-        }
-
-        /* Khi mở: Đẩy bao lì xì xuống, đẩy tờ tiền lên */
-        .open .envelope-img { transform: translateY(40px); opacity: 0.7; }
-        .open .money-card { 
-            opacity: 1; 
-            transform: translateY(-130px); 
-            z-index: 10;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .amount { font-size: 2rem; font-weight: 800; color: #27ae60; margin: 0; }
-        .wish { font-family: 'Dancing Script'; font-size: 1.4rem; color: var(--red-tet); font-weight: bold; margin-top: 10px; }
-
-        .history-box {
-            background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;
-            margin-top: 20px; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .history-list { max-height: 100px; overflow-y: auto; font-size: 0.85rem; text-align: left; scrollbar-width: none; }
+        #step-lixi { display: none; }
+        .envelope-wrapper { position: relative; width: 180px; height: 260px; margin: 20px auto; cursor: pointer; }
+        .envelope-img { width: 100%; height: 100%; background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg'); background-size: cover; border-radius: 15px; z-index: 5; position: relative; transition: 0.5s; }
+        .money-card { position: absolute; top: 10%; left: 5%; width: 90%; height: 80%; background: #fff; border-radius: 10px; color: #222; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: 0.8s; z-index: 1; }
+        
+        .open .envelope-img { transform: translateY(40px); opacity: 0.5; pointer-events: none; }
+        .open .money-card { opacity: 1; transform: translateY(-130px); z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .history-box { background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.05); }
+        .history-list { max-height: 100px; overflow-y: auto; font-size: 0.85rem; text-align: left; }
         .history-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; }
-        .user-tag { color: var(--gold); font-weight: 600; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -100,58 +35,71 @@
 
 <div class="premium-card">
     <div class="title">Lộc Xuân</div>
-    <div class="sub-title">TẾT ẤT TỴ 2026</div>
+    <div style="font-size: 0.7rem; color: #888; margin-bottom: 25px;">TẾT ẤT TỴ 2026</div>
 
     <div id="step-name">
-        <input type="text" id="input-user" class="input-box" placeholder="Nhập tên nhận lộc..." maxlength="15">
-        <br>
-        <button class="btn-confirm" onclick="confirmIdentity()">XÁC NHẬN</button>
+        <input type="text" id="input-user" class="input-box" placeholder="Nhập tên của bạn..." maxlength="20">
+        <button class="btn-confirm" id="btn-check">KIỂM TRA</button>
     </div>
 
     <div id="step-lixi">
-        <div id="hello-user" style="color:var(--gold); font-weight: 600; margin-bottom: 10px;"></div>
-        
-        <div class="envelope-wrapper" id="lixi-envelope" onclick="handleOpen()">
+        <div id="status-msg" style="color:var(--gold); font-size: 0.9rem; margin-bottom: 10px;"></div>
+        <div class="envelope-wrapper" id="lixi-envelope">
             <div class="envelope-img"></div>
-            
             <div class="money-card">
-                <span style="font-size: 0.7rem; color: #999; font-weight: 800; letter-spacing: 1px;">CHÚC MỪNG NĂM MỚI</span>
+                <span style="font-size: 0.7rem; color: #999; font-weight: 800;">CHÚC MỪNG NĂM MỚI</span>
                 <h2 class="amount" id="res-amount">0đ</h2>
-                <div class="wish" id="res-wish"></div>
-                <div style="margin-top: 15px; font-size: 20px;">🧧</div>
+                <div id="res-wish" style="color:red; font-family:'Dancing Script'; font-size:1.3rem;"></div>
             </div>
         </div>
-        <p style="font-size: 0.7rem; color: #666;">Chạm vào bao lì xì để mở</p>
     </div>
 
     <div class="history-box">
-        <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 10px; font-weight: 800;">● LỊCH SỬ NHẬN LỘC REALTIME ●</div>
+        <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 10px; font-weight: 800;">● LỊCH SỬ NHẬN LỘC ●</div>
         <div id="log-list" class="history-list"></div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    // Firebase Config (Thay bằng của bạn)
+    // 1. Cấu hình Firebase (Thay link của bạn vào đây)
     const firebaseConfig = { databaseURL: "https://PROJECT-CUA-BAN.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let savedName = "";
+    let currentUserName = "";
+    let hasOpened = false;
 
-    function confirmIdentity() {
-        const input = document.getElementById('input-user');
-        const name = input.value.trim();
-        if(name.length < 2) return alert("Vui lòng nhập tên của bạn!");
-        savedName = name;
-        document.getElementById('step-name').style.display = 'none';
-        document.getElementById('step-lixi').style.display = 'block';
-        document.getElementById('hello-user').innerText = "Chào " + savedName + "!";
-    }
+    // 2. Hàm kiểm tra tên khi nhấn nút
+    document.getElementById('btn-check').onclick = function() {
+        const rawName = document.getElementById('input-user').value.trim();
+        if (rawName.length < 2) return alert("Vui lòng nhập tên thật!");
 
+        currentUserName = rawName;
+        const normalizedName = rawName.toLowerCase().replace(/\s+/g, ''); // Chuẩn hóa tên để check
+
+        // Truy vấn Firebase xem tên này đã nhận lộc chưa
+        db.ref('lixi_data').orderByChild('id').equalTo(normalizedName).once('value', snapshot => {
+            document.getElementById('step-name').style.display = 'none';
+            document.getElementById('step-lixi').style.display = 'block';
+
+            if (snapshot.exists()) {
+                // ĐÃ MỞ RỒI: Lấy dữ liệu cũ hiển thị luôn
+                const oldData = Object.values(snapshot.val())[0];
+                showOpenedLixi(oldData.amount, "Bạn đã nhận lộc trước đó!");
+                hasOpened = true;
+            } else {
+                // CHƯA MỞ: Cho phép nhấn để mở
+                document.getElementById('status-msg').innerText = "Chào " + currentUserName + ", chạm để mở lộc!";
+                document.getElementById('lixi-envelope').onclick = handleOpen;
+            }
+        });
+    };
+
+    // 3. Hàm xử lý mở lần đầu
     function handleOpen() {
-        const env = document.getElementById('lixi-envelope');
-        if(env.classList.contains('open')) return;
+        if(hasOpened) return;
+        hasOpened = true;
 
         const r = Math.random() * 100;
         let money = "";
@@ -162,46 +110,58 @@
         else if(r <= 78) money = "2.000đ";
         else money = "1.000đ";
 
-        const wishes = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Tấn Tài Tấn Lộc", "An Khang Thịnh Vượng"];
+        const wishes = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng"];
         const wish = wishes[Math.floor(Math.random() * wishes.length)];
 
-        env.classList.add('open');
-        document.getElementById('res-amount').innerText = money;
-        document.getElementById('res-wish').innerText = wish;
+        // Gửi lên Firebase để "khóa" tên này lại
+        db.ref('lixi_data').push({
+            id: currentUserName.toLowerCase().replace(/\s+/g, ''),
+            name: currentUserName,
+            amount: money,
+            wish: wish,
+            time: Date.now()
+        });
 
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#f1c40f', '#d63031'] });
-
-        db.ref('lixi_data').push({ name: savedName, amount: money, time: Date.now() });
-        localStorage.setItem('lixi_done_2026', JSON.stringify({n: savedName, a: money, w: wish}));
+        showOpenedLixi(money, "Lộc xuân của bạn!");
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
 
-    // Load lịch sử
+    // 4. Hàm hiển thị trạng thái đã mở
+    function showOpenedLixi(amount, msg) {
+        document.getElementById('lixi-envelope').classList.add('open');
+        document.getElementById('res-amount').innerText = amount;
+        document.getElementById('status-msg').innerText = msg;
+        document.getElementById('res-wish').innerText = "Chúc bạn Năm mới vui vẻ!";
+    }
+
+    // 5. Cập nhật lịch sử tự động (Realtime)
     db.ref('lixi_data').limitToLast(10).on('value', snap => {
         const list = document.getElementById('log-list');
         list.innerHTML = "";
         const data = snap.val();
         if(data) {
             Object.values(data).reverse().forEach(item => {
-                list.innerHTML += `<div class="history-item"><span class="user-tag">★ ${item.name}</span><span>${item.amount}</span></div>`;
+                list.innerHTML += `<div class="history-item">
+                    <span style="color:var(--gold)">★ ${item.name}</span>
+                    <span>${item.amount}</span>
+                </div>`;
             });
         }
     });
 
-    // Background pháo hoa giấy nhỏ
+    // Background trang trí
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let particles = [];
-    function create() {
-        if(particles.length < 50) particles.push({x:Math.random()*canvas.width, y:-10, s:Math.random()*3+1, v:Math.random()*2+1, c:Math.random()>0.5?'#f1c40f':'#d63031'});
-    }
+    let flowers = [];
     function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        particles.forEach((p,i) => {
-            p.y += p.v; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill();
-            if(p.y > canvas.height) particles.splice(i,1);
+        if(flowers.length<30) flowers.push({x:Math.random()*canvas.width, y:-10, v:Math.random()*2+1});
+        flowers.forEach((f,i) => {
+            f.y += f.v; ctx.fillStyle = '#d63031'; ctx.beginPath(); ctx.arc(f.x, f.y, 2, 0, 7); ctx.fill();
+            if(f.y > canvas.height) flowers.splice(i,1);
         });
-        create(); requestAnimationFrame(draw);
+        requestAnimationFrame(draw);
     }
     draw();
 </script>
