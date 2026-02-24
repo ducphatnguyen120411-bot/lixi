@@ -1,47 +1,101 @@
-const express = require('express');
-const mysql = require('mysql2/promise');
-const path = require('path');
-const app = express();
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧧 Lì Xì Tết Ất Tỵ 2026 🧧</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #f1c40f; --red: #d63031; --glass: rgba(15, 15, 15, 0.98); }
+        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        .premium-card { position: relative; width: 340px; background: var(--glass); border: 2px solid var(--gold); border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--gold); margin: 0; }
+        .sub-title { font-size: 0.7rem; letter-spacing: 4px; color: #888; margin-bottom: 25px; font-weight: 800; }
 
-app.use(express.json());
-app.use(express.static('public'));
+        .envelope-wrapper { position: relative; width: 180px; height: 260px; margin: 30px auto; cursor: pointer; perspective: 1000px; }
+        
+        .envelope-img { 
+            width: 100%; height: 100%; 
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg');
+            background-size: cover; background-position: center; border-radius: 15px; position: relative; z-index: 5; transition: 0.6s ease;
+        }
 
-// Kết nối MySQL bằng biến môi trường của Railway
-const pool = mysql.createPool(process.env.MYSQL_URL || process.env.MYSQLURL);
+        .money-card { 
+            position: absolute; top: 10%; left: 5%; width: 90%; height: 80%; 
+            background: #fff; border-radius: 12px; color: #222; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            opacity: 0; transition: 0.8s cubic-bezier(.17,.67,.41,1.18); z-index: 1; 
+        }
 
-// Khởi tạo bảng dữ liệu nếu chưa có
-async function initDB() {
-    const conn = await pool.getConnection();
-    await conn.query(`
-        CREATE TABLE IF NOT EXISTS users (
-            id VARCHAR(255) PRIMARY KEY,
-            name VARCHAR(255),
-            amount VARCHAR(50),
-            time DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-    conn.release();
-}
-initDB();
+        .open .envelope-img { transform: translateY(60px) rotate(-5deg); opacity: 0.5; pointer-events: none; }
+        .open .money-card { opacity: 1; transform: translateY(-130px); z-index: 10; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
 
-// API xử lý Lì Xì
-app.post('/api/lixi', async (req, res) => {
-    const { name, amount } = req.body;
-    const id = name.toLowerCase().replace(/\s+/g, '');
+        .amount { font-size: 2.2rem; font-weight: 800; color: #27ae60; margin: 10px 0; }
+        .wish { font-family: 'Dancing Script'; font-size: 1.4rem; color: var(--red); font-weight: bold; }
+        
+        .hint { font-size: 0.8rem; color: var(--gold); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
 
-    try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
-        if (rows.length > 0) return res.json({ status: 'exists', data: rows[0] });
+<div class="premium-card">
+    <div class="title">Lộc Xuân</div>
+    <div class="sub-title">TẾT ẤT TỴ 2026</div>
 
-        await pool.query('INSERT INTO users (id, name, amount) VALUES (?, ?, ?)', [id, name, amount]);
-        res.json({ status: 'success', data: { name, amount } });
-    } catch (err) { res.status(500).send(err.message); }
-});
+    <div class="envelope-wrapper" id="lixi" onclick="openLixi()">
+        <div class="envelope-img"></div>
+        <div class="money-card">
+            <span style="font-size: 0.6rem; color: #999; font-weight: 800;">CHÚC MỪNG NĂM MỚI</span>
+            <h2 class="amount" id="res-amount">0đ</h2>
+            <div class="wish" id="res-wish">Vạn Sự Như Ý</div>
+            <div style="margin-top: 15px; font-size: 25px;">🧧</div>
+        </div>
+    </div>
 
-// API lấy lịch sử
-app.get('/api/history', async (req, res) => {
-    const [rows] = await pool.query('SELECT name, amount FROM users ORDER BY time DESC LIMIT 10');
-    res.json(rows);
-});
+    <p id="hint" class="hint">Chạm vào bao lì xì để nhận lộc!</p>
+</div>
 
-app.listen(process.env.PORT || 3000);
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+    function openLixi() {
+        const lixi = document.getElementById('lixi');
+        if(lixi.classList.contains('open')) return;
+
+        // --- BẢNG TỶ LỆ CẬP NHẬT ---
+        const r = Math.random() * 100;
+        let money = "";
+        
+        if (r <= 10) {
+            money = "50.000đ"; // 10% trúng 50k
+        } else if (r <= 24) {
+            money = "36.000đ"; // 14% trúng 36k
+        } else if (r <= 41) {
+            money = "20.000đ"; // 17% trúng 20k
+        } else if (r <= 61) {
+            money = "10.000đ"; // 20% trúng 10k
+        } else if (r <= 80) {
+            money = "5.000đ";  // 19% trúng 5k
+        } else {
+            money = "2.000đ";  // 20% trúng 2k
+        }
+
+        const wishes = ["Vạn Sự Như Ý", "Tấn Tài Tấn Lộc", "An Khang Thịnh Vượng", "Phát Tài Phát Lộc"];
+        document.getElementById('res-wish').innerText = wishes[Math.floor(Math.random() * wishes.length)];
+        document.getElementById('res-amount').innerText = money;
+        
+        lixi.classList.add('open');
+        document.getElementById('hint').style.display = "none";
+
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#f1c40f', '#d63031', '#ffffff']
+        });
+    }
+</script>
+</body>
+</html>
