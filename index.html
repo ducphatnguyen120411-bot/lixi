@@ -3,178 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧧 Lì Xì LẤY LỘC 🧧</title>
+    <title>🧧 Lì Xì Tết 2026 - Premium Embed 🧧</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     
     <style>
         :root {
             --gold: #f1c40f;
-            --red: #d63031;
-            --glass: rgba(255, 255, 255, 0.08);
-            --font-main: 'Montserrat', sans-serif;
-            --font-art: 'Dancing Script', cursive;
+            --gold-glow: rgba(241, 196, 15, 0.4);
+            --red-gradient: linear-gradient(145deg, #d63031, #8b0000);
+            --glass: rgba(15, 15, 15, 0.85);
         }
 
         body {
-            margin: 0; background: #0b0d0f; color: white;
-            font-family: var(--font-main); display: flex;
+            margin: 0; background: #050505; color: white;
+            font-family: 'Montserrat', sans-serif; display: flex;
             justify-content: center; align-items: center;
             height: 100vh; overflow: hidden;
         }
 
         #canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        .embed-card {
-            position: relative; z-index: 10; width: 380px;
-            background: var(--glass); backdrop-filter: blur(25px);
-            border: 1px solid rgba(241, 196, 15, 0.4);
-            border-radius: 40px; padding: 35px; text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        /* Card Embed Xịn */
+        .premium-card {
+            position: relative; z-index: 10; width: 370px;
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid rgba(241, 196, 15, 0.3);
+            border-radius: 35px; padding: 30px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 15px var(--gold-glow);
         }
 
-        .title-art { font-family: var(--font-art); font-size: 2.8rem; color: var(--gold); margin: 0; text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
-        .title-sub { font-weight: 700; letter-spacing: 4px; font-size: 0.8rem; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-bottom: 25px; }
-
-        .input-box {
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(241, 196, 15, 0.5);
-            padding: 12px; border-radius: 15px; color: white;
-            width: 85%; outline: none; transition: 0.3s; margin-bottom: 30px; text-align: center;
+        .premium-card::after {
+            content: ""; position: absolute; inset: 0; border-radius: 35px;
+            padding: 1.5px; background: linear-gradient(135deg, var(--gold), transparent, var(--gold));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude; pointer-events: none;
         }
 
+        .title { font-family: 'Dancing Script', cursive; font-size: 3.2rem; color: var(--gold); margin: 0; filter: drop-shadow(0 0 10px var(--gold-glow)); }
+        .sub-title { font-size: 0.7rem; font-weight: 800; letter-spacing: 5px; color: #666; text-transform: uppercase; margin-bottom: 25px; }
+
+        /* Input thiết kế lại */
+        .input-wrapper { position: relative; margin-bottom: 25px; }
+        .name-input {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(241, 196, 15, 0.2);
+            padding: 14px; border-radius: 15px; color: white; width: 85%;
+            text-align: center; font-size: 1rem; font-weight: 600; outline: none; transition: 0.3s;
+        }
+        .name-input:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+
+        /* Bao lì xì hiệu ứng mượt */
         .envelope {
-            width: 140px; height: 210px; background: linear-gradient(145deg, #d63031, #8b0000);
-            border-radius: 15px; margin: 0 auto 35px; position: relative; cursor: pointer;
-            transform-style: preserve-3d; transition: 0.8s; box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+            width: 140px; height: 210px; background: var(--red-gradient);
+            border-radius: 18px; margin: 0 auto 30px; position: relative; cursor: pointer;
+            transform-style: preserve-3d; transition: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
-
         .flap {
             position: absolute; top: 0; width: 100%; height: 85px;
             background: #a51e1e; clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 5; transform-origin: top; transition: 0.6s; border-bottom: 1px solid var(--gold);
+            z-index: 5; transition: 0.6s; border-bottom: 1.5px solid var(--gold);
         }
-
         .open .flap { transform: rotateX(180deg); }
-        .open.envelope { transform: scale(1.05) translateY(-10px); }
+        .open.envelope { transform: scale(1.05) translateY(-25px); }
 
-        .money {
-            position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
-            background: #fff; border-radius: 10px; color: #333;
+        .money-sheet {
+            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: #fff; border-radius: 12px; color: #222;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; transform: translateZ(-1px); transition: 0.7s; padding: 10px;
+            opacity: 0; transition: 0.8s;
         }
+        .open .money-sheet { opacity: 1; transform: translateY(-100px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .money-sheet h2 { font-size: 1.8rem; margin: 5px 0; color: #27ae60; font-weight: 800; }
+        .wish { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: #d63031; }
 
-        .open .money { opacity: 1; transform: translateZ(50px) translateY(-90px); }
-        .money h2 { font-size: 1.8rem; margin: 5px 0; color: #27ae60; font-weight: 700; }
-        .wish-text { font-family: var(--font-art); font-size: 1.2rem; color: #d63031; margin-top: 5px; text-align: center; line-height: 1.2; }
+        /* Lịch sử chuyên nghiệp */
+        .history-pane {
+            background: rgba(0,0,0,0.4); border-radius: 20px; padding: 15px;
+            border: 1px solid rgba(255,255,255,0.05); text-align: left;
+        }
+        .history-head { font-size: 0.8rem; font-weight: 800; color: var(--gold); text-align: center; margin-bottom: 12px; opacity: 0.8; }
+        .history-list { max-height: 120px; overflow-y: auto; scrollbar-width: none; }
+        .history-item { 
+            display: flex; align-items: center; padding: 8px 0; font-size: 0.85rem; 
+            border-bottom: 1px solid rgba(255,255,255,0.03); 
+            animation: fadeIn 0.5s ease;
+        }
+        .star-icon { color: var(--gold); margin-right: 12px; font-size: 0.7rem; }
+        b { color: #fff; }
 
-        .history-section { background: rgba(0,0,0,0.4); border-radius: 25px; padding: 20px; border: 1px solid rgba(241, 196, 15, 0.2); text-align: left; }
-        .history-header { font-size: 1.1rem; color: var(--gold); text-align: center; font-weight: 700; margin-bottom: 15px; border-bottom: 1px dotted rgba(255,255,255,0.2); padding-bottom: 10px; }
-        .history-list { max-height: 130px; overflow-y: auto; }
-        .history-item { display: flex; align-items: center; padding: 10px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .star { color: var(--gold); margin-right: 12px; }
-        
-        .history-list::-webkit-scrollbar { width: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <canvas id="canvas"></canvas>
 
-<div class="embed-card">
-    <div class="title-art">Lộc Xuân</div>
-    <div class="title-sub">Lịch sử nhận lộc 2026</div>
+<div class="premium-card">
+    <div class="title">Lộc Xuân</div>
+    <div class="sub-title">2026 Ất Tỵ</div>
+    
+    <div class="input-wrapper">
+        <input type="text" id="user-name" class="name-input" placeholder="Nhập tên nhận lộc..." maxlength="15">
+    </div>
 
-    <input type="text" id="username" class="input-box" placeholder="Nhập tên của bạn..." value="Khách Quý">
-
-    <div class="envelope" id="lixi" onclick="openLixi()">
+    <div class="envelope" id="env-box" onclick="startOpening()">
         <div class="flap"></div>
-        <div style="position:absolute; bottom:25px; width:100%; text-align:center; font-size:45px;">🧧</div>
-        <div class="money">
-            <b style="font-size: 0.6rem; color: #999;">BẠN NHẬN ĐƯỢC</b>
-            <h2 id="amount">0đ</h2>
-            <div class="wish-text" id="wish-display">Vạn sự như ý!</div>
+        <div style="position:absolute; bottom:25px; width:100%; text-align:center; font-size:45px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4))">🧧</div>
+        <div class="money-sheet">
+            <span style="font-size: 0.6rem; font-weight: 800; color: #999;">CHÚC MỪNG</span>
+            <h2 id="final-amount">0đ</h2>
+            <div class="wish" id="final-wish"></div>
         </div>
     </div>
 
-    <div class="history-section">
-        <div class="history-header">BẢNG VÀNG LÌ XÌ</div>
-        <div id="h-list" class="history-list"></div>
+    <div class="history-pane">
+        <div class="history-head">● LỊCH SỬ THỜI GIAN THỰC ●</div>
+        <div id="log-container" class="history-list"></div>
     </div>
 </div>
 
 <script>
-    // --- FIREBASE (Thay link của bạn) ---
+    // --- FIREBASE (Điền link của bạn) ---
     const firebaseConfig = { databaseURL: "https://PROJECT-CUA-BAN.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const wishes = [
-        "Vạn sự như ý!", "Tấn tài tấn lộc!", "Sức khỏe dồi dào!", 
-        "An khang thịnh vượng!", "Phát tài phát lộc!", "Tỷ sự như mơ!",
-        "Vui vẻ bình an!", "Công thành danh toại!", "Tiền vào như nước!", "Hạnh phúc đong đầy!"
-    ];
+    const greetings = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Tấn Tài Tấn Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng"];
 
-    // --- HIỆU ỨNG HOA RƠI ---
+    function startOpening() {
+        const input = document.getElementById('user-name');
+        const name = input.value.trim();
+        const env = document.getElementById('env-box');
+
+        if (env.classList.contains('open')) return;
+        if (name === "") return alert("Vui lòng cho biết quý danh!");
+
+        // --- LOGIC TỶ LỆ CHÍNH XÁC ---
+        // 50k(10%), 36k(12%), 20k(13%), 10k(18%), 2k(25%), 1k(22%)
+        const r = Math.random() * 100;
+        let amt = "";
+        if(r <= 10) amt = "50.000đ";
+        else if(r <= 22) amt = "36.000đ";
+        else if(r <= 35) amt = "20.000đ";
+        else if(r <= 53) amt = "10.000đ";
+        else if(r <= 78) amt = "2.000đ";
+        else amt = "1.000đ";
+        
+        const wish = greetings[Math.floor(Math.random() * greetings.length)];
+
+        env.classList.add('open');
+        document.getElementById('final-amount').innerText = amt;
+        document.getElementById('final-wish').innerText = wish;
+        input.disabled = true;
+
+        // Lưu lên Database
+        db.ref('lixi_2026').push({
+            n: name,
+            a: amt,
+            t: Date.now()
+        });
+
+        localStorage.setItem('lixi_done', JSON.stringify({name, amt, wish}));
+    }
+
+    // Lắng nghe Database Realtime
+    db.ref('lixi_2026').limitToLast(15).on('value', snap => {
+        const container = document.getElementById('log-container');
+        container.innerHTML = "";
+        const data = snap.val();
+        if(data) {
+            Object.values(data).reverse().forEach(v => {
+                container.innerHTML += `
+                    <div class="history-item">
+                        <span class="star-icon">✦</span>
+                        <span><b>${v.n}</b> nhận <b>${v.a}</b></span>
+                    </div>`;
+            });
+        }
+    });
+
+    // Hoa rơi mượt mà
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     let petals = [];
     class Petal {
         constructor() { this.reset(); this.y = Math.random()*canvas.height; }
-        reset() { this.x = Math.random()*canvas.width; this.y = -20; this.s = Math.random()*5+2; this.sp = Math.random()*1+0.5; this.c = Math.random()>0.5?'#ffb7c5':'#f1c40f'; }
+        reset() { this.x = Math.random()*canvas.width; this.y = -20; this.s = Math.random()*4+2; this.sp = Math.random()*0.8+0.4; this.c = Math.random()>0.5?'#ffb7c5':'#f1c40f'; }
         draw() { ctx.fillStyle = this.c; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
-        update() { this.y += this.sp; this.x += Math.sin(this.y/30); if(this.y>canvas.height) this.reset(); }
+        update() { this.y += this.sp; this.x += Math.sin(this.y/50)*0.5; if(this.y>canvas.height) this.reset(); }
     }
-    for(let i=0; i<60; i++) petals.push(new Petal());
+    for(let i=0; i<50; i++) petals.push(new Petal());
     function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); petals.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(anim); }
     anim();
 
-    // --- LOGIC LÌ XÌ ---
-    function openLixi() {
-        const env = document.getElementById('lixi');
-        if(env.classList.contains('open')) return;
-
-        const name = document.getElementById('username').value.trim() || "Khách Quý";
-        const rand = Math.random() * 100;
-        let amt = "10.000đ";
-
-        if(rand <= 10) amt = "50.000đ";      // 10%
-        else if(rand <= 30) amt = "36.000đ"; // 20%
-        else if(rand <= 60) amt = "20.000đ";
-        else amt = "10.000đ";
-
-        const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
-        
-        env.classList.add('open');
-        document.getElementById('amount').innerText = amt;
-        document.getElementById('wish-display').innerText = randomWish;
-
-        db.ref('lixi_history').push({ n: name, a: amt, w: randomWish, t: Date.now() });
-        localStorage.setItem('saved_lixi_2026', JSON.stringify({amt, wish: randomWish}));
-    }
-
-    // LOAD DATA REALTIME
-    db.ref('lixi_history').limitToLast(12).on('value', snap => {
-        const list = document.getElementById('h-list');
-        list.innerHTML = "";
-        const data = snap.val();
-        if(data) {
-            Object.values(data).reverse().forEach(v => {
-                list.innerHTML += `<div class="history-item"><span class="star">★</span><span><b>${v.n}</b> nhận ${v.a}</span></div>`;
-            });
-        }
-    });
-
     window.onload = () => {
-        const saved = localStorage.getItem('saved_lixi_2026');
+        const saved = localStorage.getItem('lixi_done');
         if(saved) {
-            const {amt, wish} = JSON.parse(saved);
-            document.getElementById('lixi').classList.add('open');
-            document.getElementById('amount').innerText = amt;
-            document.getElementById('wish-display').innerText = wish;
+            const d = JSON.parse(saved);
+            document.getElementById('env-box').classList.add('open');
+            document.getElementById('final-amount').innerText = d.amt;
+            document.getElementById('final-wish').innerText = d.wish;
+            document.getElementById('user-name').value = d.name;
+            document.getElementById('user-name').disabled = true;
         }
     };
 </script>
