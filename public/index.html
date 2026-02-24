@@ -1,34 +1,17 @@
-async function checkAndOpen() {
+async function handleLixi() {
     const name = document.getElementById('user-name').value.trim();
-    if (name.length < 2) return alert("Nhập tên!");
+    const money = Math.random() > 0.5 ? "20.000đ" : "10.000đ"; // Tỉ lệ random
 
-    // Tính tiền ngẫu nhiên
-    const r = Math.random() * 100;
-    const money = r < 10 ? "50.000đ" : r < 30 ? "20.000đ" : "2.000đ";
-
-    // Gửi lên Database Railway
-    const response = await fetch('/api/lixi', {
+    const res = await fetch('/api/lixi', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ name, amount: money })
     });
+    const result = await res.json();
     
-    const result = await response.json();
     if (result.status === 'exists') {
-        alert("Bạn đã nhận lộc rồi: " + result.data.amount);
-        renderLixi(result.data.amount);
+        alert("Bạn đã nhận rồi: " + result.data.amount);
     } else {
-        renderLixi(result.data.amount);
-        confetti(); // Hiệu ứng pháo hoa
+        alert("Chúc mừng! Bạn nhận được: " + result.data.amount);
     }
-    updateHistory();
 }
-
-// Hàm lấy lịch sử tự động mỗi 5 giây
-async function updateHistory() {
-    const res = await fetch('/api/history');
-    const data = await res.json();
-    const list = document.getElementById('log-list');
-    list.innerHTML = data.map(i => `<div class="item">★ ${i.name}: ${i.amount}</div>`).join('');
-}
-setInterval(updateHistory, 5000);
