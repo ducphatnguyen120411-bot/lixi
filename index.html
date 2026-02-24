@@ -3,199 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🧧 LÌ XÌ 2026 🧧</title>
+    <title>🧧 LÌ XÌ LẤY LỘC 2026 🧧</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@600&display=swap" rel="stylesheet">
     <style>
         :root { --red: #b71c1c; --gold: #ffd700; --dark: #4a0000; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
             margin: 0; background: var(--dark) url('https://www.transparenttextures.com/patterns/oriental-tiles.png');
-            font-family: 'Quicksand', sans-serif; display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; color: var(--gold); overflow: hidden;
+            font-family: 'Quicksand', sans-serif; min-height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; color: var(--gold);
         }
 
         header { text-align: center; margin-top: 20px; z-index: 10; }
         h1 { font-family: 'Dancing Script', cursive; font-size: 2.5rem; margin: 0; text-shadow: 0 0 10px var(--red); }
 
-        /* Nút xáo bài */
-        .btn-shuffle {
-            margin: 20px 0; padding: 12px 35px; font-size: 1.1rem; font-weight: 800;
-            color: var(--dark); background: linear-gradient(45deg, var(--gold), #fff176);
-            border: none; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-            transition: 0.3s;
+        /* Vùng chứa các bao lì xì xòe quạt hoặc lưới */
+        .container {
+            position: relative; width: 100%; max-width: 600px; height: 350px;
+            margin-top: 50px; display: flex; justify-content: center; align-items: flex-end;
         }
 
-        /* Lưới 5 bao lì xì sử dụng hình ảnh thật */
-        .grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
-            width: 100%; max-width: 500px; padding: 10px;
+        /* Hiệu ứng Nảy lên khi rê chuột vào */
+        .lixi-item {
+            position: absolute; width: 100px; height: 170px;
+            background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhrQV5kLZpUr3Bb8CxB6Jh_XI9SZL9YydiTFaKeGpKjRa9NEAO9K99uJ-JEH_4GTxeCRK10qfzMoSyO6ccfWbOJ6OXo_SUaw-X3Yzp3W4jszc2IRt2G1TUFPCGR_WjsG-5zaxncAxqACByb1Zm3neDCN2W7HDQ0av-u1CEgt1P0lXbAO3bJ0fHlBj34fq0/s400-rw/(%20Anhpng.com%20)%20-%20LIXI%2013.jpg') no-repeat center/cover;
+            border: 2px solid var(--gold); border-radius: 10px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            bottom: 20px;
         }
-        .mini-lixi {
-            width: 90px; height: 150px; 
-            background: url('https://i.imgur.com/8Qp4Z0P.png') no-repeat center/cover; /* Hình bao lì xì rồng */
-            border: 1px solid var(--gold); border-radius: 8px; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: 0.4s;
-        }
-        .mini-lixi:hover { transform: translateY(-10px); box-shadow: 0 0 20px var(--gold); }
 
-        /* Màn hình rút tiền */
-        #draw-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+        /* Hover nảy lên đầu */
+        .lixi-item:hover {
+            transform: translateY(-50px) scale(1.2);
+            z-index: 99 !important;
+            box-shadow: 0 20px 40px var(--gold);
+        }
+
+        /* Màn hình lật và rút tiền */
+        #game-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000; backdrop-filter: blur(10px);
-        }
-        
-        .draw-box { position: relative; width: 260px; height: 400px; }
-        
-        /* Hình ảnh tờ tiền nằm thẳng */
-        .bill-img {
-            position: absolute; top: 20px; left: 10px; width: 240px; height: auto;
-            border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1; display: none; transform: translateY(0);
+            z-index: 1000; backdrop-filter: blur(8px);
         }
 
-        .envelope-main {
-            position: absolute; inset: 0; 
-            background: url('https://i.imgur.com/8Qp4Z0P.png') no-repeat center/cover; /* Bao lì xì lớn */
-            border: 3px solid var(--gold); border-radius: 15px; z-index: 2;
-            box-shadow: 0 0 50px rgba(255,0,0,0.3); touch-action: none;
+        /* Hiệu ứng lật hình 3 & 4 */
+        .flip-box {
+            width: 240px; height: 380px; perspective: 1000px;
+            position: relative;
         }
 
-        .result-text {
-            position: absolute; bottom: -80px; width: 100%; text-align: center;
-            font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: #fff;
+        .flip-inner {
+            width: 100%; height: 100%; transition: transform 0.8s;
+            transform-style: preserve-3d; position: relative;
+        }
+
+        .flipped { transform: rotateY(180deg); }
+
+        .flip-front, .flip-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border: 3px solid var(--gold); border-radius: 15px;
+        }
+
+        .flip-front { background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhrQV5kLZpUr3Bb8CxB6Jh_XI9SZL9YydiTFaKeGpKjRa9NEAO9K99uJ-JEH_4GTxeCRK10qfzMoSyO6ccfWbOJ6OXo_SUaw-X3Yzp3W4jszc2IRt2G1TUFPCGR_WjsG-5zaxncAxqACByb1Zm3neDCN2W7HDQ0av-u1CEgt1P0lXbAO3bJ0fHlBj34fq0/s400-rw/(%20Anhpng.com%20)%20-%20LIXI%2013.jpg') no-repeat center/cover; }
+        
+        /* Mặt sau lì xì */
+        .flip-back {
+            background: #d32f2f; transform: rotateY(180deg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* Tờ tiền nằm thẳng phía sau */
+        .money-bill {
+            position: absolute; width: 220px; height: auto;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: -1; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             display: none;
         }
 
-        .shuffling { animation: shuffleEffect 0.5s infinite alternate; pointer-events: none; }
-        @keyframes shuffleEffect { from { transform: rotate(5deg); } to { transform: rotate(-5deg); } }
-        
-        .hint { color: #fff; margin-bottom: 20px; font-weight: bold; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .instruction { color: white; margin-bottom: 15px; font-weight: bold; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .btn-reset {
+            margin-top: 50px; padding: 12px 30px; background: var(--gold);
+            border: none; border-radius: 25px; font-weight: bold; cursor: pointer; display: none;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🧧 Lì Xì 🧧</h1>
-        <div style="color: #fff; font-size: 0.9rem; opacity: 0.8;">Bản Nâng Cấp Masterpiece 2026</div>
+        <h1>🧧 Lì Xì LẤY LỘC 2026 🧧</h1>
+        <p>Rê chuột để chọn - Bấm để nhận lộc</p>
     </header>
 
-    <button class="btn-shuffle" id="btnShuffle" onclick="shuffleGame()">XÁO LỘC MAY MẮN</button>
-
-    <div class="grid" id="lixiGrid">
-        <div class="mini-lixi"></div>
-        <div class="mini-lixi"></div>
-        <div class="mini-lixi"></div>
-        <div class="mini-lixi"></div>
-        <div class="mini-lixi"></div>
+    <div class="container" id="lixiContainer">
+        <div class="lixi-item" style="left: 10%; transform: rotate(-15deg); z-index: 1;" onclick="chooseLixi(this)"></div>
+        <div class="lixi-item" style="left: 25%; transform: rotate(-5deg); z-index: 2;" onclick="chooseLixi(this)"></div>
+        <div class="lixi-item" style="left: 40%; transform: rotate(0deg); z-index: 3;" onclick="chooseLixi(this)"></div>
+        <div class="lixi-item" style="left: 55%; transform: rotate(5deg); z-index: 2;" onclick="chooseLixi(this)"></div>
+        <div class="lixi-item" style="left: 70%; transform: rotate(15deg); z-index: 1;" onclick="chooseLixi(this)"></div>
     </div>
 
-    <div id="draw-overlay">
-        <div class="hint">👇 KÉO BAO LÌ XÌ XUỐNG DƯỚI!</div>
-        <div class="draw-box">
-            <img src="" id="moneyImg" class="bill-img" alt="Tiền lì xì">
-            <div class="envelope-main" id="mainEnvelope"></div>
-            <div class="result-text" id="wishText">Chúc mừng năm mới!</div>
+    <div id="game-overlay">
+        <div class="instruction" id="hintText">🧧 ĐANG LẬT LÌ XÌ...</div>
+        
+        <div class="flip-box">
+            <img src="" id="moneyResult" class="money-bill" alt="Tiền">
+            <div class="flip-inner" id="flipCard">
+                <div class="flip-front"></div>
+                <div class="flip-back">
+                    <img src="https://i.imgur.com/8Qp4Z0P.png" style="width: 80%; opacity: 0.3;" alt="back">
+                </div>
+            </div>
         </div>
-        <button class="btn-shuffle" id="btnReload" style="display:none; margin-top: 120px;" onclick="location.reload()">NHẬN LỘC TIẾP</button>
+
+        <button class="btn-reset" id="btnAgain" onclick="location.reload()">BỐC LƯỢT MỚI</button>
     </div>
 
     <script>
-        // Link ảnh tiền từ file bạn gửi (thay bằng link trực tiếp của bạn nếu cần)
-        const moneyImages = {
-            "1k": "https://i.imgur.com/XF8v9XF.jpg",
-            "2k": "https://i.imgur.com/KqW4hXq.png",
-            "10k": "https://i.imgur.com/GzY5Xz5.png",
-            "20k": "https://i.imgur.com/VzY6Xz6.png",
-            "50k": "https://i.imgur.com/BzY7Xz7.png"
+        const moneyImgs = {
+            "1k": "https://upload.wikimedia.org/wikipedia/vi/thumb/d/d0/%C4%90%E1%BB%93ng_b%E1%BA%A1c_100_%C4%91%E1%BB%93ng.jpg/250px-%C4%90%E1%BB%93ng_b%E1%BA%A1c_100_%C4%91%E1%BB%93ng.jpg",
+            "2k": "https://media.baoquangninh.vn/dataimages/201509/original/images825897_a.jpg", // Bạn thay link hình 2k thật vào đây
+            "10k": "https://en.numista.com/catalogue/photos/viet_nam/629a30e8e84ca4.62721942-original.jpg",
+            "20k": "https://en.numista.com/catalogue/photos/viet_nam/63fdf048f16474.69949110-original.jpg",
+            "50k": "https://upload.wikimedia.org/wikipedia/vi/thumb/2/28/%C4%90%E1%BB%93ng_b%E1%BA%A1c_50.000.jpg/330px-%C4%90%E1%BB%93ng_b%E1%BA%A1c_50.000.jpg"
         };
 
-        const wishes = ["Tấn tài tấn lộc!", "Sức khỏe dồi dào!", "Vạn sự như ý!", "Học hành tấn tới!", "Tình duyên nở rộ!"];
-        let canSelect = false;
+        function chooseLixi(el) {
+            const overlay = document.getElementById('game-overlay');
+            const flipCard = document.getElementById('flipCard');
+            overlay.style.display = 'flex';
 
-        function shuffleGame() {
-            const btn = document.getElementById('btnShuffle');
-            const items = document.querySelectorAll('.mini-lixi');
-            btn.style.display = 'none';
-            items.forEach(el => el.classList.add('shuffling'));
-
+            // Bước 1: Hiện lì xì và Tự động lật lại (Hình 3 & 4)
             setTimeout(() => {
-                items.forEach(el => {
-                    el.classList.remove('shuffling');
-                    el.style.order = Math.floor(Math.random() * 5);
-                    el.onclick = () => openFocusMode();
-                });
-                canSelect = true;
-            }, 1500);
+                flipCard.classList.add('flipped');
+                document.getElementById('hintText').innerText = "👇 KÉO XUỐNG ĐỂ XEM TIỀN!";
+                initPullDown();
+            }, 1000);
         }
 
-        function openFocusMode() {
-            if(!canSelect) return;
-            document.getElementById('draw-overlay').style.display = 'flex';
-            initDrag();
-        }
+        function initPullDown() {
+            const card = document.getElementById('flipCard');
+            const money = document.getElementById('moneyResult');
+            let startY = 0, isDragging = false;
 
-        function getPrize() {
-            const r = Math.random() * 100;
-            if (r <= 5) return "50k";
-            if (r <= 20) return "20k";
-            if (r <= 40) return "10k";
-            if (r <= 50) return "2k";
-            return "1k";
-        }
+            // Thiết lập tờ tiền sẵn bên dưới
+            const prizes = ["1k", "2k", "10k", "20k", "50k"];
+            const selectedPrize = prizes[Math.floor(Math.random() * prizes.length)];
+            money.src = moneyImgs[selectedPrize];
+            money.style.display = 'block';
 
-        function initDrag() {
-            const el = document.getElementById('mainEnvelope');
-            const money = document.getElementById('moneyImg');
-            let startY = 0, currentY = 0, isDragging = false;
-
-            const onStart = (e) => {
-                isDragging = true;
+            const start = (e) => {
                 startY = e.touches ? e.touches[0].clientY : e.clientY;
+                isDragging = true;
+                card.style.transition = 'none';
             };
 
-            const onMove = (e) => {
+            const move = (e) => {
                 if (!isDragging) return;
-                const y = e.touches ? e.touches[0].clientY : e.clientY;
-                currentY = Math.max(0, y - startY);
-                if (currentY < 350) {
-                    el.style.transform = `translateY(${currentY}px)`;
+                let currentY = e.touches ? e.touches[0].clientY : e.clientY;
+                let diff = currentY - startY;
+                if (diff > 0 && diff < 400) {
+                    card.style.transform = `rotateY(180deg) translateY(${diff}px)`;
                 }
             };
 
-            const onEnd = () => {
+            const end = (e) => {
                 if (!isDragging) return;
                 isDragging = false;
-                if (currentY > 150) {
-                    // Thành công rút tiền
-                    el.style.transition = '0.6s ease-out';
-                    el.style.transform = 'translateY(600px)';
-                    
-                    const prize = getPrize();
-                    money.src = moneyImages[prize];
-                    money.style.display = 'block';
-                    
-                    document.getElementById('wishText').innerText = wishes[Math.floor(Math.random()*wishes.length)];
-                    document.getElementById('wishText').style.display = 'block';
-                    document.getElementById('btnReload').style.display = 'block';
-                    document.querySelector('.hint').style.display = 'none';
-
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                let currentY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+                if (currentY - startY > 150) {
+                    // Vuốt thành công
+                    card.style.transition = '0.5s';
+                    card.style.transform = `rotateY(180deg) translateY(600px)`;
+                    document.getElementById('hintText').innerText = "CHÚC MỪNG NĂM MỚI!";
+                    document.getElementById('btnAgain').style.display = 'block';
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 } else {
-                    el.style.transform = 'translateY(0)';
+                    card.style.transition = '0.3s';
+                    card.style.transform = `rotateY(180deg) translateY(0)`;
                 }
             };
 
-            el.addEventListener('touchstart', onStart);
-            window.addEventListener('touchmove', onMove);
-            window.addEventListener('touchend', onEnd);
-            el.addEventListener('mousedown', onStart);
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', onEnd);
+            card.addEventListener('mousedown', start);
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', end);
+            card.addEventListener('touchstart', start);
+            window.addEventListener('touchmove', move);
+            window.addEventListener('touchend', end);
         }
     </script>
 </body>
