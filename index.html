@@ -53,14 +53,14 @@
         const r = Math.random() * 100;
         let money = "";
         
-        // Tỷ lệ mới: 1k, 2k, 5k, 10k chiếm đa số
-        if (r <= 25) money = "1.000đ";       // 25% trúng 1k
-        else if (r <= 50) money = "2.000đ";  // 25% trúng 2k
-        else if (r <= 70) money = "5.000đ";  // 20% trúng 5k
-        else if (r <= 85) money = "10.000đ"; // 15% trúng 10k
-        else if (r <= 92) money = "20.000đ"; // 7% trúng 20k
-        else if (r <= 97) money = "36.000đ"; // 5% trúng 36k
-        else money = "50.000đ";              // 3% trúng 50k (Hiếm)
+        // BẢNG TỶ LỆ MỚI: 50k chỉ còn 1%
+        if (r <= 30) money = "1.000đ";       // 30% trúng 1k
+        else if (r <= 55) money = "2.000đ";  // 25% trúng 2k
+        else if (r <= 75) money = "5.000đ";  // 20% trúng 5k
+        else if (r <= 90) money = "10.000đ"; // 15% trúng 10k
+        else if (r <= 96) money = "20.000đ"; // 6% trúng 20k
+        else if (r <= 99) money = "36.000đ"; // 3% trúng 36k
+        else money = "50.000đ";              // 1% trúng 50k (Siêu hiếm)
 
         localStorage.setItem('lixi_2026_amount', money);
         showResult(money);
