@@ -1,0 +1,136 @@
+index.html<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧧 LÌ XÌ RỒNG VÀNG 2026 🧧</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #c62828; --gold: #ffd700; --dark: #5d0000; }
+        body {
+            margin: 0; background: #8b0000 url('https://www.transparenttextures.com/patterns/dark-leather.png');
+            font-family: 'Quicksand', sans-serif; display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; color: var(--gold); overflow-x: hidden;
+        }
+        h1 { font-family: 'Dancing Script', cursive; font-size: clamp(2rem, 8vw, 3.5rem); margin: 20px 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        
+        .container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 25px; padding: 20px; width: 90%; max-width: 1000px; perspective: 1000px;
+        }
+
+        /* Thiết kế bao lì xì 3D */
+        .lixi {
+            position: relative; width: 140px; height: 230px; background: var(--red);
+            border-radius: 12px; border: 3px solid var(--gold); cursor: pointer;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform-style: preserve-3d;
+        }
+        .lixi:hover { transform: translateY(-15px) rotateY(10deg); box-shadow: 0 20px 40px var(--gold); }
+        .lixi::before { content: ""; position: absolute; top: 0; width: 100%; height: 40px; background: var(--dark); border-radius: 10px 10px 50% 50%; border-bottom: 2px solid var(--gold); }
+
+        .dragon { font-size: 60px; margin-top: 20px; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3)); }
+        .tag { border: 1px solid var(--gold); padding: 2px 10px; font-size: 12px; border-radius: 4px; background: rgba(0,0,0,0.2); }
+        .opened { opacity: 0.4; filter: grayscale(1); pointer-events: none; transform: scale(0.8) !important; }
+
+        /* Modal xịn sò */
+        #resultModal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;
+            backdrop-filter: blur(10px);
+        }
+        .card {
+            background: #fff; padding: 40px; border-radius: 30px; text-align: center;
+            border: 8px solid var(--gold); width: 85%; max-width: 450px;
+            animation: pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .money { font-size: 4rem; color: var(--red); font-weight: 900; margin: 10px 0; text-shadow: 1px 1px 0px #000; }
+        .wish { font-size: 1.3rem; color: #444; font-style: italic; margin-bottom: 30px; line-height: 1.6; font-family: 'Dancing Script', cursive; }
+        
+        button {
+            background: linear-gradient(45deg, var(--red), var(--dark)); color: white; border: 2px solid var(--gold);
+            padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; font-weight: bold;
+        }
+        button:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--gold); }
+    </style>
+</head>
+<body>
+
+    <h1>🧧 Khai Xuân Như Ý 2026 🧧</h1>
+    <p style="text-align: center; color: white;">Mỗi bao lì xì là một lời chúc và một phần lộc may mắn!</p>
+
+    <div class="container" id="grid"></div>
+
+    <div id="resultModal">
+        <div class="card">
+            <h2 style="color: #333; margin: 0;">Chúc Mừng Năm Mới!</h2>
+            <div class="money" id="moneyText">0đ</div>
+            <p class="wish" id="wishText">Chúc bạn vạn sự như ý!</p>
+            <button onclick="closeModal()">Tạ ơn Rồng Vàng</button>
+        </div>
+    </div>
+
+    <script>
+        const wishes = [
+            "Vạn sự như ý - Tỷ sự như mơ!", "Sức khỏe dồi dào - Tiền vào như nước!",
+            "Học hành tấn tới - Thi cử đỗ cao!", "Công thành danh toại - Sự nghiệp thăng hoa!",
+            "Gia đình bình an - Hạnh phúc ngập tràn!", "Năm mới thắng lợi mới - Thành công rực rỡ!"
+        ];
+
+        // Tỉ lệ % chuẩn bạn yêu cầu
+        function getMoney() {
+            const r = Math.random() * 100;
+            if (r <= 10) return "50.000đ"; // 10%
+            if (r <= 23) return "20.000đ"; // 13%
+            if (r <= 38) return "10.000đ"; // 15%
+            if (r <= 68) return "5.000đ";  // 30%
+            return "1.000đ";               // 22% còn lại (1k chiếm 22%)
+        }
+
+        const grid = document.getElementById('grid');
+        const modal = document.getElementById('resultModal');
+
+        function init() {
+            for (let i = 0; i < 7; i++) {
+                const box = document.createElement('div');
+                box.className = 'lixi';
+                box.innerHTML = `
+                    <div class="dragon">🐉</div>
+                    <div class="tag">PHÚC LỘC</div>
+                    <div style="font-weight:bold;">2026</div>
+                `;
+                box.onclick = () => openLixi(box);
+                grid.appendChild(box);
+            }
+        }
+
+        function openLixi(el) {
+            const money = getMoney();
+            const wish = wishes[Math.floor(Math.random() * wishes.length)];
+
+            document.getElementById('moneyText').innerText = money;
+            document.getElementById('wishText').innerText = wish;
+            modal.style.display = 'flex';
+
+            el.classList.add('opened');
+            el.innerHTML = `<div style="color:white; font-weight:bold; text-align:center;">ĐÃ NHẬN LỘC<br>${money}</div>`;
+
+            // Hiệu ứng pháo hoa 2 bên
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#ffd700'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#ffd700'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        function closeModal() { modal.style.display = 'none'; }
+        init();
+    </script>
+</body>
+</html>
