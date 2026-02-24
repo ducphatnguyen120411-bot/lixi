@@ -3,175 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đại Hội Lì Xì 2026 - 10% Jackpot</title>
+    <title>Lì Xì Thượng Uyển 2026 - Bản Đặc Biệt 36k</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root { --red: #d63031; --gold: #f1c40f; --bg: #1e272e; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Arial', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-        
-        /* Hiệu ứng hạt nền */
-        #canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        :root { 
+            --red-silk: linear-gradient(135deg, #d63031 0%, #8b0000 100%);
+            --gold-glow: #f1c40f;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
 
-        section { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        
-        .scroll-hint { font-size: 1.2rem; color: var(--gold); animation: bounce 2s infinite; margin-top: 20px; cursor: pointer; }
+        body { 
+            margin: 0; background: radial-gradient(circle, #2d3436 0%, #000000 100%);
+            color: white; font-family: 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden; height: 100vh;
+        }
 
-        /* Bảng xếp hạng động */
-        .board { background: rgba(0,0,0,0.5); border: 1px solid var(--gold); padding: 15px; border-radius: 10px; width: 300px; height: 150px; overflow: hidden; }
-        .log { font-size: 0.9rem; margin: 5px 0; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        #canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        /* Bao lì xì 3D Nâng cấp */
-        .box { perspective: 1000px; margin-top: 50px; }
+        section { 
+            position: relative; z-index: 10;
+            height: 100vh; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .glass-panel {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2); padding: 40px;
+            border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            text-align: center; max-width: 400px; width: 90%;
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--gold-glow); text-shadow: 0 0 20px rgba(241, 196, 15, 0.5); }
+
+        input {
+            width: 100%; padding: 15px; margin: 20px 0;
+            border-radius: 15px; border: 1px solid var(--gold-glow);
+            background: rgba(0,0,0,0.3); color: white; text-align: center;
+            font-size: 1.1rem; outline: none; box-sizing: border-box;
+        }
+
+        .btn-gold {
+            background: var(--gold-glow); color: #000; border: none;
+            padding: 15px 40px; border-radius: 50px; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s;
+        }
+
+        .btn-gold:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--gold-glow); }
+
+        .lixi-wrapper { perspective: 1000px; margin: 40px 0; cursor: pointer; }
         .envelope {
-            width: 160px; height: 250px; background: var(--red); border-radius: 8px;
-            position: relative; cursor: pointer; transform-style: preserve-3d;
-            transition: transform 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,1);
+            width: 180px; height: 280px; background: var(--red-silk);
+            border-radius: 15px; position: relative; transform-style: preserve-3d;
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.3);
         }
-        .envelope.shake { animation: shake 0.5s infinite; }
+        .envelope::after {
+            content: "🧧"; position: absolute; bottom: 30px; width: 100%;
+            text-align: center; font-size: 60px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        }
+
         .flap {
-            position: absolute; top: 0; width: 100%; height: 80px;
-            background: #b71c1c; clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 2; transform-origin: top; transition: 0.4s;
+            position: absolute; top: 0; width: 100%; height: 100px;
+            background: #a51e1e; clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 5; transform-origin: top; transition: 0.6s;
+            border-bottom: 2px solid var(--gold-glow);
         }
-        .open .flap { transform: rotateX(180deg); }
-        
-        .money {
-            position: absolute; top: 20px; left: 10px; width: 140px; height: 210px;
-            background: #f1f2f6; color: #2f3542; border-radius: 5px;
+
+        .open .flap { transform: rotateX(180deg); z-index: 1; }
+        .open .envelope { transform: rotateY(-10deg) rotateX(5deg); }
+
+        .money-sheet {
+            position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
+            background: #fff; border-radius: 10px; color: #2d3436;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transform: translateZ(-1px); opacity: 0; transition: 0.5s;
+            transform: translateZ(-1px); opacity: 0; transition: 0.8s;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
         }
-        .open .money { opacity: 1; transform: translateZ(20px) translateY(-60px); }
+        .open .money-sheet { opacity: 1; transform: translateZ(50px) translateY(-100px); }
 
-        /* Overlay khi thắng */
-        #win-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: none; z-index: 1000;
-            flex-direction: column; justify-content: center; align-items: center;
+        .history-box { width: 100%; max-width: 450px; margin-top: 20px; max-height: 200px; overflow-y: auto; }
+        .history-card {
+            background: rgba(255,255,255,0.05); padding: 12px 20px;
+            border-radius: 12px; display: flex; justify-content: space-between;
+            margin-bottom: 8px; border-left: 4px solid var(--gold-glow);
         }
 
-        @keyframes shake { 0% {transform:rotate(0)} 25% {transform:rotate(5deg)} 50% {transform:rotate(-5deg)} 75% {transform:rotate(5deg)} 100% {transform:rotate(0)} }
-        @keyframes bounce { 0%, 100% {transform:translateY(0)} 50% {transform:translateY(-15px)} }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <canvas id="canvas"></canvas>
 
-<section>
-    <h1 class="animate__animated animate__pulse animate__infinite" style="color: var(--gold); font-size: 3.5rem;">🧧 SIÊU LÌ XÌ 🧧</h1>
-    <p>Chào mừng bạn đến với sự kiện Tết 2026</p>
-    <div class="scroll-hint" onclick="document.getElementById('s2').scrollIntoView()">Kéo xuống để xem ai đã trúng ▼</div>
-</section>
-
-<section id="s2">
-    <h2 style="color: var(--gold);">LỊCH SỬ NHẬN LỘC</h2>
-    <div class="board" id="live-board"></div>
-    <div class="scroll-hint" onclick="document.getElementById('s3').scrollIntoView()">Kéo xuống để THỬ VẬN MAY ▼</div>
-</section>
-
-<section id="s3">
-    <h2 id="status">NHẤN VÀO BAO LÌ XÌ ĐỂ MỞ</h2>
-    <div class="box">
-        <div class="envelope shake" id="env" onclick="handleOpen()">
-            <div class="flap"></div>
-            <div style="position:absolute; bottom:15px; width:100%; font-size:30px;">福</div>
-            <div class="money" id="money-card">
-                <h2 id="money-text">0đ</h2>
-                <p style="font-size: 12px;">Chúc mừng năm mới!</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=Luck" width="60">
-            </div>
-        </div>
+<section id="step-1">
+    <div class="glass-panel animate__animated animate__zoomIn">
+        <h1>XUÂN 2026</h1>
+        <p style="opacity: 0.8;">Nhập danh tính để khai lộc đầu năm</p>
+        <input type="text" id="username" placeholder="Tên của bạn..." maxlength="20">
+        <button class="btn-gold" onclick="startApp()">Khai Lộc</button>
     </div>
 </section>
 
-<div id="win-screen">
-    <h1 id="win-msg" class="animate__animated animate__zoomInDown" style="color:var(--gold); font-size: 3rem;"></h1>
-    <p id="win-sub"></p>
-    <button onclick="location.reload()" style="margin-top:20px; padding:15px 30px; background:var(--gold); border:none; cursor:pointer; font-weight:bold; border-radius:50px;">CHƠI LẠI</button>
-</div>
+<section id="step-2" class="hidden">
+    <h2 id="welcome-txt" style="color: var(--gold-glow); margin-bottom: 0;"></h2>
+    <p style="opacity: 0.6;">Chạm vào bao lì xì để nhận lộc</p>
+
+    <div class="lixi-wrapper" onclick="openLixi()">
+        <div class="envelope" id="env">
+            <div class="flap"></div>
+            <div class="money-sheet">
+                <small id="status-lixi">CHÚC MỪNG</small>
+                <h2 id="amount-txt" style="font-size: 2.2rem; color: #27ae60; margin: 10px 0;">0đ</h2>
+                <div style="width: 50px; height: 2px; background: #eee;"></div>
+                <p style="font-size: 0.7rem; color: #999; margin-top: 10px;">LỘC XUÂN NHƯ Ý</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-box" id="history-list"></div>
+</section>
 
 <script>
-    // 1. Canvas Pháo hoa
+    // --- CANVAS HOA MAI & HOA ANH ĐÀO ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    let particles = [];
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
-    class Particle {
-        constructor(x, y, color) {
-            this.x = x; this.y = y; this.color = color;
-            this.v = {x: (Math.random()-0.5)*10, y: (Math.random()-0.5)*10};
-            this.a = 1;
+    let flowers = [];
+    const colors = ['#ffb7c5', '#f1c40f', '#ffcccc'];
+
+    class Flower {
+        constructor() {
+            this.reset();
+            this.y = Math.random() * canvas.height;
         }
-        draw() { ctx.globalAlpha = this.a; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI*2); ctx.fill(); }
-        update() { this.x += this.v.x; this.y += this.v.y; this.v.y += 0.1; this.a -= 0.01; }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = -20;
+            this.size = Math.random() * 8 + 5;
+            this.speedX = Math.random() * 2 - 1;
+            this.speedY = Math.random() * 1 + 1.2;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.angle = Math.random() * 360;
+            this.spin = Math.random() * 2 - 1;
+        }
+        update() {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            this.angle += this.spin;
+            if(this.y > canvas.height) this.reset();
+        }
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle * Math.PI / 180);
+            ctx.fillStyle = this.color;
+            for(let i=0; i<5; i++) {
+                ctx.rotate(72 * Math.PI / 180);
+                ctx.beginPath();
+                ctx.ellipse(0, this.size/2, this.size/2, this.size/1.2, 0, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            ctx.restore();
+        }
     }
 
-    function spawnFirework() {
-        const x = Math.random()*canvas.width;
-        const color = `hsl(${Math.random()*360}, 70%, 50%)`;
-        for(let i=0; i<50; i++) particles.push(new Particle(x, canvas.height/2, color));
-    }
-    setInterval(spawnFirework, 1500);
+    for(let i=0; i<60; i++) flowers.push(new Flower());
 
-    function loop() {
-        ctx.fillStyle = 'rgba(30, 39, 46, 0.2)'; ctx.fillRect(0,0,canvas.width, canvas.height);
-        particles = particles.filter(p => p.a > 0);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(loop);
+    function animate() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        flowers.forEach(f => { f.update(); f.draw(); });
+        requestAnimationFrame(animate);
     }
-    loop();
+    animate();
 
-    // 2. Leaderboard giả
-    const names = ["Anh Tuấn", "Chị Lan", "Bé Gạo", "Hoàng Boss", "Thảo My", "Ẩn Danh"];
-    function updateLog() {
-        const log = document.createElement('div');
-        log.className = "log animate__animated animate__fadeInUp";
-        const m = [1000, 5000, 10000, 20000][Math.floor(Math.random()*4)];
-        log.innerHTML = `⭐ <b>${names[Math.floor(Math.random()*names.length)]}</b> vừa nhận ${m.toLocaleString()}đ`;
-        const b = document.getElementById('live-board');
-        b.prepend(log);
-        if(b.childNodes.length > 5) b.removeChild(b.lastChild);
+    // --- LOGIC CHÍNH ---
+    function startApp() {
+        const name = document.getElementById('username').value.trim();
+        if(name.length < 2) return;
+        localStorage.setItem('temp_name', name);
+        checkStatus();
     }
-    setInterval(updateLog, 2500);
 
-    // 3. Logic chính (Tỷ lệ 10% cho 50k)
-    function handleOpen() {
+    function checkStatus() {
+        const name = localStorage.getItem('temp_name');
+        const saved = localStorage.getItem('lixi_data_2026');
+        if(!name) return;
+
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+        document.getElementById('welcome-txt').innerText = "Chào " + name;
+
+        if(saved) {
+            const data = JSON.parse(saved);
+            document.getElementById('amount-txt').innerText = data.amount;
+            document.getElementById('status-lixi').innerText = "BẠN ĐÃ NHẬN";
+            document.getElementById('env').classList.add('open');
+            document.getElementById('env').parentElement.onclick = null;
+        }
+        renderHistory();
+    }
+
+    function openLixi() {
         const env = document.getElementById('env');
         if(env.classList.contains('open')) return;
 
-        env.classList.remove('shake');
-        document.getElementById('status').innerText = "Đang xử lý giao dịch...";
+        const rand = Math.random() * 100;
+        let amount = "2.000đ";
 
-        setTimeout(() => {
-            env.classList.add('open');
-            const rand = Math.random() * 100;
-            let val = "2.000đ";
-            
-            // LOGIC TỶ LỆ MỚI
-            if(rand <= 10) val = "50.000đ"; // 10% trúng 50k
-            else if(rand <= 30) val = "20.000đ";
-            else if(rand <= 60) val = "10.000đ";
-            else val = "5.000đ";
+        // --- CẤU HÌNH TỶ LỆ MỚI ---
+        if(rand <= 10) amount = "50.000đ";      // 10% Jackpot
+        else if(rand <= 30) amount = "36.000đ"; // 20% (từ 10 đến 30)
+        else if(rand <= 50) amount = "20.000đ"; // 20%
+        else if(rand <= 75) amount = "10.000đ"; // 25%
+        else if(rand <= 90) amount = "5.000đ";  // 15%
+        else amount = "2.000đ";                 // 10%
 
-            document.getElementById('money-text').innerText = val;
+        env.classList.add('open');
+        document.getElementById('amount-txt').innerText = amount;
 
-            setTimeout(() => {
-                const screen = document.getElementById('win-screen');
-                screen.style.display = 'flex';
-                document.getElementById('win-msg').innerText = val;
-                document.getElementById('win-sub').innerText = (val === "50.000đ") ? "XUẤT SẮC! BẠN LÀ NHÀ VÔ ĐỊCH!" : "Chúc mừng bạn đã nhận được lộc!";
-                
-                if(val === "50.000đ") {
-                    // Nổ pháo hoa liên tục khi trúng 50k
-                    let count = 0;
-                    let timer = setInterval(() => { spawnFirework(); count++; if(count>10) clearInterval(timer); }, 200);
-                }
-            }, 1000);
-        }, 800);
+        const result = { 
+            name: localStorage.getItem('temp_name'), 
+            amount: amount, 
+            time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        };
+        localStorage.setItem('lixi_data_2026', JSON.stringify(result));
+
+        let history = JSON.parse(localStorage.getItem('real_history_2026') || "[]");
+        history.unshift(result);
+        localStorage.setItem('real_history_2026', JSON.stringify(history));
+        
+        setTimeout(renderHistory, 500);
     }
+
+    function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('real_history_2026') || "[]");
+        const list = document.getElementById('history-list');
+        list.innerHTML = history.slice(0, 6).map(item => `
+            <div class="history-card animate__animated animate__fadeInUp">
+                <span>👤 <b>${item.name}</b></span>
+                <span style="color:var(--gold-glow)">+${item.amount}</span>
+                <small style="opacity:0.5">${item.time}</small>
+            </div>
+        `).join('');
+    }
+
+    window.onload = checkStatus;
 </script>
 </body>
 </html>
