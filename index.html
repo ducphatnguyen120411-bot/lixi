@@ -1,169 +1,47 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧧 Lì Xì Tết 2026 - Duy Nhất 1 Lần 🧧</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <style>
-        :root { --gold: #f1c40f; --red: #d63031; --glass: rgba(15, 15, 15, 0.95); }
-        body { margin: 0; background: #0a0a0a; color: white; font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        .premium-card { position: relative; z-index: 10; width: 350px; background: var(--glass); backdrop-filter: blur(20px); border: 2px solid var(--gold); border-radius: 30px; padding: 30px; text-align: center; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
-        .title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--gold); margin: 0; }
-        .input-box { background: rgba(255,255,255,0.05); border: 1.5px solid var(--gold); padding: 15px; border-radius: 15px; color: white; width: 85%; text-align: center; font-size: 1.1rem; outline: none; margin-bottom: 20px; }
-        .btn-confirm { background: var(--gold); color: #000; border: none; padding: 12px 40px; border-radius: 10px; font-weight: 800; cursor: pointer; }
-        
-        #step-lixi { display: none; }
-        .envelope-wrapper { position: relative; width: 180px; height: 260px; margin: 20px auto; cursor: pointer; }
-        .envelope-img { width: 100%; height: 100%; background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg'); background-size: cover; border-radius: 15px; z-index: 5; position: relative; transition: 0.5s; }
-        .money-card { position: absolute; top: 10%; left: 5%; width: 90%; height: 80%; background: #fff; border-radius: 10px; color: #222; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: 0.8s; z-index: 1; }
-        
-        .open .envelope-img { transform: translateY(40px); opacity: 0.5; pointer-events: none; }
-        .open .money-card { opacity: 1; transform: translateY(-130px); z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        .history-box { background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px; margin-top: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .history-list { max-height: 100px; overflow-y: auto; font-size: 0.85rem; text-align: left; }
-        .history-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; }
-    </style>
-</head>
-<body>
+const express = require('express');
+const mysql = require('mysql2/promise');
+const path = require('path');
+const app = express();
 
-<canvas id="bg-canvas"></canvas>
+app.use(express.json());
+app.use(express.static('public'));
 
-<div class="premium-card">
-    <div class="title">Lộc Xuân</div>
-    <div style="font-size: 0.7rem; color: #888; margin-bottom: 25px;">TẾT ẤT TỴ 2026</div>
+// Kết nối MySQL bằng biến môi trường của Railway
+const pool = mysql.createPool(process.env.MYSQL_URL || process.env.MYSQLURL);
 
-    <div id="step-name">
-        <input type="text" id="input-user" class="input-box" placeholder="Nhập tên của bạn..." maxlength="20">
-        <button class="btn-confirm" id="btn-check">KIỂM TRA</button>
-    </div>
+// Khởi tạo bảng dữ liệu nếu chưa có
+async function initDB() {
+    const conn = await pool.getConnection();
+    await conn.query(`
+        CREATE TABLE IF NOT EXISTS users (
+            id VARCHAR(255) PRIMARY KEY,
+            name VARCHAR(255),
+            amount VARCHAR(50),
+            time DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+    conn.release();
+}
+initDB();
 
-    <div id="step-lixi">
-        <div id="status-msg" style="color:var(--gold); font-size: 0.9rem; margin-bottom: 10px;"></div>
-        <div class="envelope-wrapper" id="lixi-envelope">
-            <div class="envelope-img"></div>
-            <div class="money-card">
-                <span style="font-size: 0.7rem; color: #999; font-weight: 800;">CHÚC MỪNG NĂM MỚI</span>
-                <h2 class="amount" id="res-amount">0đ</h2>
-                <div id="res-wish" style="color:red; font-family:'Dancing Script'; font-size:1.3rem;"></div>
-            </div>
-        </div>
-    </div>
+// API xử lý Lì Xì
+app.post('/api/lixi', async (req, res) => {
+    const { name, amount } = req.body;
+    const id = name.toLowerCase().replace(/\s+/g, '');
 
-    <div class="history-box">
-        <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 10px; font-weight: 800;">● LỊCH SỬ NHẬN LỘC ●</div>
-        <div id="log-list" class="history-list"></div>
-    </div>
-</div>
+    try {
+        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
+        if (rows.length > 0) return res.json({ status: 'exists', data: rows[0] });
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script>
-    // 1. Cấu hình Firebase (Thay link của bạn vào đây)
-    const firebaseConfig = { databaseURL: "https://PROJECT-CUA-BAN.firebaseio.com" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+        await pool.query('INSERT INTO users (id, name, amount) VALUES (?, ?, ?)', [id, name, amount]);
+        res.json({ status: 'success', data: { name, amount } });
+    } catch (err) { res.status(500).send(err.message); }
+});
 
-    let currentUserName = "";
-    let hasOpened = false;
+// API lấy lịch sử
+app.get('/api/history', async (req, res) => {
+    const [rows] = await pool.query('SELECT name, amount FROM users ORDER BY time DESC LIMIT 10');
+    res.json(rows);
+});
 
-    // 2. Hàm kiểm tra tên khi nhấn nút
-    document.getElementById('btn-check').onclick = function() {
-        const rawName = document.getElementById('input-user').value.trim();
-        if (rawName.length < 2) return alert("Vui lòng nhập tên thật!");
-
-        currentUserName = rawName;
-        const normalizedName = rawName.toLowerCase().replace(/\s+/g, ''); // Chuẩn hóa tên để check
-
-        // Truy vấn Firebase xem tên này đã nhận lộc chưa
-        db.ref('lixi_data').orderByChild('id').equalTo(normalizedName).once('value', snapshot => {
-            document.getElementById('step-name').style.display = 'none';
-            document.getElementById('step-lixi').style.display = 'block';
-
-            if (snapshot.exists()) {
-                // ĐÃ MỞ RỒI: Lấy dữ liệu cũ hiển thị luôn
-                const oldData = Object.values(snapshot.val())[0];
-                showOpenedLixi(oldData.amount, "Bạn đã nhận lộc trước đó!");
-                hasOpened = true;
-            } else {
-                // CHƯA MỞ: Cho phép nhấn để mở
-                document.getElementById('status-msg').innerText = "Chào " + currentUserName + ", chạm để mở lộc!";
-                document.getElementById('lixi-envelope').onclick = handleOpen;
-            }
-        });
-    };
-
-    // 3. Hàm xử lý mở lần đầu
-    function handleOpen() {
-        if(hasOpened) return;
-        hasOpened = true;
-
-        const r = Math.random() * 100;
-        let money = "";
-        if(r <= 10) money = "50.000đ";
-        else if(r <= 22) money = "36.000đ";
-        else if(r <= 35) money = "20.000đ";
-        else if(r <= 53) money = "10.000đ";
-        else if(r <= 78) money = "2.000đ";
-        else money = "1.000đ";
-
-        const wishes = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "An Khang Thịnh Vượng"];
-        const wish = wishes[Math.floor(Math.random() * wishes.length)];
-
-        // Gửi lên Firebase để "khóa" tên này lại
-        db.ref('lixi_data').push({
-            id: currentUserName.toLowerCase().replace(/\s+/g, ''),
-            name: currentUserName,
-            amount: money,
-            wish: wish,
-            time: Date.now()
-        });
-
-        showOpenedLixi(money, "Lộc xuân của bạn!");
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-    }
-
-    // 4. Hàm hiển thị trạng thái đã mở
-    function showOpenedLixi(amount, msg) {
-        document.getElementById('lixi-envelope').classList.add('open');
-        document.getElementById('res-amount').innerText = amount;
-        document.getElementById('status-msg').innerText = msg;
-        document.getElementById('res-wish').innerText = "Chúc bạn Năm mới vui vẻ!";
-    }
-
-    // 5. Cập nhật lịch sử tự động (Realtime)
-    db.ref('lixi_data').limitToLast(10).on('value', snap => {
-        const list = document.getElementById('log-list');
-        list.innerHTML = "";
-        const data = snap.val();
-        if(data) {
-            Object.values(data).reverse().forEach(item => {
-                list.innerHTML += `<div class="history-item">
-                    <span style="color:var(--gold)">★ ${item.name}</span>
-                    <span>${item.amount}</span>
-                </div>`;
-            });
-        }
-    });
-
-    // Background trang trí
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let flowers = [];
-    function draw() {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        if(flowers.length<30) flowers.push({x:Math.random()*canvas.width, y:-10, v:Math.random()*2+1});
-        flowers.forEach((f,i) => {
-            f.y += f.v; ctx.fillStyle = '#d63031'; ctx.beginPath(); ctx.arc(f.x, f.y, 2, 0, 7); ctx.fill();
-            if(f.y > canvas.height) flowers.splice(i,1);
-        });
-        requestAnimationFrame(draw);
-    }
-    draw();
-</script>
-</body>
-</html>
+app.listen(process.env.PORT || 3000);
