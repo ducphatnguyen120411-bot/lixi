@@ -13,11 +13,11 @@
         :root {
             --gold: #f1c40f;
             --red-tet: #d63031;
-            --glass: rgba(10, 10, 10, 0.9);
+            --glass: rgba(15, 15, 15, 0.95);
         }
 
         body {
-            margin: 0; background: #050505; color: white;
+            margin: 0; background: #0a0a0a; color: white;
             font-family: 'Montserrat', sans-serif; display: flex;
             justify-content: center; align-items: center;
             height: 100vh; overflow: hidden;
@@ -25,196 +25,190 @@
 
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        /* Trang trí Cành Đào/Mai */
-        .tree-decor {
-            position: fixed; width: 300px; height: 300px; z-index: 2; pointer-events: none;
-            background-size: contain; background-repeat: no-repeat;
+        .decor-tree {
+            position: fixed; width: 250px; height: 250px; z-index: 2; pointer-events: none;
+            background-size: contain; background-repeat: no-repeat; opacity: 0.8;
         }
-        .cherry-left { top: 0; left: 0; background-image: url('https://png.pngtree.com/png-clipart/20230113/ourmid/pngtree-cherry-blossom-flowers-branch-illustration-png-image_6561571.png'); transform: rotate(15deg); }
-        .apricot-right { bottom: 0; right: 0; background-image: url('https://png.pngtree.com/png-clipart/20221223/ourmid/pngtree-yellow-apricot-flower-with-buds-in-tet-holiday-vietnam-png-image_6534299.png'); transform: scaleX(-1); }
+        .cherry-top { top: 0; left: 0; background-image: url('https://png.pngtree.com/png-clipart/20230113/ourmid/pngtree-cherry-blossom-flowers-branch-illustration-png-image_6561571.png'); }
+        .apricot-bot { bottom: 0; right: 0; background-image: url('https://png.pngtree.com/png-clipart/20221223/ourmid/pngtree-yellow-apricot-flower-with-buds-in-tet-holiday-vietnam-png-image_6534299.png'); }
 
         .premium-card {
-            position: relative; z-index: 10; width: 360px;
-            background: var(--glass); backdrop-filter: blur(15px);
+            position: relative; z-index: 10; width: 350px;
+            background: var(--glass); backdrop-filter: blur(20px);
             border: 2px solid var(--gold); border-radius: 30px;
-            padding: 25px; text-align: center;
-            box-shadow: 0 0 50px rgba(214, 48, 49, 0.3);
-            animation: cardFloat 3s ease-in-out infinite;
+            padding: 30px; text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(241, 196, 15, 0.2);
         }
 
-        @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--gold); margin: 0; }
+        .sub-title { font-size: 0.7rem; letter-spacing: 4px; color: #888; margin-bottom: 25px; font-weight: 800; }
 
-        .title { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--gold); margin: 0; text-shadow: 0 0 15px var(--gold); }
-        
-        #step-name { margin-top: 20px; }
+        #step-name { animation: fadeIn 0.5s; }
         .input-box {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--gold);
-            padding: 15px; border-radius: 12px; color: white; width: 85%;
-            text-align: center; font-size: 1rem; font-weight: 600; outline: none; margin-bottom: 20px;
+            background: rgba(255,255,255,0.05); border: 1.5px solid var(--gold);
+            padding: 15px; border-radius: 15px; color: white; width: 85%;
+            text-align: center; font-size: 1.1rem; font-weight: 600; outline: none; margin-bottom: 20px;
         }
-        .btn-lixi {
-            background: var(--gold); color: #000; border: none; padding: 12px 35px;
-            border-radius: 50px; font-weight: 800; cursor: pointer; transition: 0.3s;
+        .btn-confirm {
+            background: var(--gold); color: #000; border: none; padding: 12px 40px;
+            border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
 
         #step-lixi { display: none; }
         .envelope {
-            width: 140px; height: 210px; background: linear-gradient(145deg, #d63031, #8b0000);
-            border-radius: 15px; margin: 20px auto; position: relative; cursor: pointer;
+            width: 150px; height: 220px; background: linear-gradient(145deg, #d63031, #a51e1e);
+            border-radius: 15px; margin: 40px auto; position: relative; cursor: pointer;
             transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
         }
+
+        /* --- FIX LỖI HÌNH TAM GIÁC --- */
         .flap {
-            position: absolute; top: 0; width: 100%; height: 80px;
-            background: #a51e1e; clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 5; transition: 0.6s; border-bottom: 1.5px solid var(--gold);
+            position: absolute; top: 0; width: 100%; height: 90px;
+            background: #901414; clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 10; transition: 0.6s ease; border-bottom: 1.5px solid var(--gold);
+            transform-origin: top;
         }
-        .open .flap { transform: rotateX(180deg); }
-        .open.envelope { transform: scale(1.1) translateY(-30px); }
+        .open .flap { 
+            transform: rotateX(180deg); 
+            opacity: 0; /* Xóa hẳn tam giác khi đã mở để không che chữ */
+            z-index: 1; 
+        }
 
-        .money {
-            position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
-            background: #fff; border-radius: 10px; color: #333;
+        .money-card {
+            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: #fff; border-radius: 10px; color: #222;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; transition: 0.8s;
+            opacity: 0; transition: 0.8s; z-index: 5; /* Nằm dưới nắp khi chưa mở */
         }
-        .open .money { opacity: 1; transform: translateY(-90px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
-        .history {
-            background: rgba(0,0,0,0.4); border-radius: 20px; padding: 15px;
-            margin-top: 15px; border: 1px solid rgba(255,255,255,0.1);
+        .open .money-card { 
+            opacity: 1; 
+            transform: translateY(-130px); /* Đẩy tiền lên cao hơn */
+            z-index: 20; /* Nằm trên cùng khi đã mở */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
-        .history-list { max-height: 80px; overflow-y: auto; font-size: 0.8rem; text-align: left; }
-        .history-item { padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* --- END FIX --- */
 
-        /* Hiệu ứng Pháo Hoa */
-        #fireworks { position: fixed; top: 0; left: 0; z-index: 100; pointer-events: none; }
+        .amount { font-size: 1.8rem; font-weight: 800; color: #27ae60; margin: 0; }
+        .wish { font-family: 'Dancing Script'; font-size: 1.3rem; color: var(--red-tet); font-weight: bold; margin-top: 5px; }
+
+        .history-box {
+            background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;
+            margin-top: 20px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .history-list { max-height: 100px; overflow-y: auto; font-size: 0.85rem; text-align: left; scrollbar-width: none; }
+        .history-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; }
+        .user-tag { color: var(--gold); font-weight: 600; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
-<canvas id="fireworks"></canvas>
-
-<div class="tree-decor cherry-left"></div>
-<div class="tree-decor apricot-right"></div>
+<div class="decor-tree cherry-top"></div>
+<div class="decor-tree apricot-bot"></div>
 
 <div class="premium-card">
     <div class="title">Lộc Xuân</div>
-    <div style="font-size: 0.7rem; letter-spacing: 5px; color: #aaa;">ẤT TỴ 2026</div>
+    <div class="sub-title">TẾT ẤT TỴ 2026</div>
 
     <div id="step-name">
-        <input type="text" id="name-in" class="input-box" placeholder="Nhập tên nhận lộc...">
+        <input type="text" id="input-user" class="input-box" placeholder="Nhập tên nhận lộc..." maxlength="15">
         <br>
-        <button class="btn-lixi" onclick="goLixi()">NHẬN LÌ XÌ</button>
+        <button class="btn-confirm" onclick="confirmIdentity()">XÁC NHẬN</button>
     </div>
 
     <div id="step-lixi">
-        <div class="envelope" id="env" onclick="openMe()">
+        <div id="hello-user" style="color:var(--gold); font-weight: 600; margin-bottom: 10px;"></div>
+        <div class="envelope" id="lixi-envelope" onclick="handleOpen()">
             <div class="flap"></div>
-            <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:40px;">🧧</div>
-            <div class="money">
-                <h2 id="amt" style="color:#27ae60; margin:0;">0đ</h2>
-                <p id="wish" style="font-family:'Dancing Script'; color:#d63031; font-size:1.1rem; margin:5px 0;"></p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=ChucMungNamMoi" width="50">
+            <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:45px;">🧧</div>
+            <div class="money-card">
+                <span style="font-size: 0.6rem; color: #999; font-weight: 800;">CHÚC MỪNG NĂM MỚI</span>
+                <h2 class="amount" id="res-amount">0đ</h2>
+                <div class="wish" id="res-wish"></div>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=Tet2026" style="margin-top:10px; opacity:0.5;">
             </div>
         </div>
     </div>
 
-    <div class="history">
-        <div style="color:var(--gold); font-size:0.7rem; font-weight:800; margin-bottom:8px;">● LỊCH SỬ NHẬN LỘC ●</div>
-        <div id="hist-list" class="history-list"></div>
+    <div class="history-box">
+        <div style="font-size: 0.7rem; color: var(--gold); margin-bottom: 10px; font-weight: 800;">● LỊCH SỬ NHẬN LỘC REALTIME ●</div>
+        <div id="log-list" class="history-list"></div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    // --- FIREBASE ---
+    // Cấu hình Firebase
     const firebaseConfig = { databaseURL: "https://PROJECT-CUA-BAN.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let userName = "";
+    let savedName = "";
 
-    function goLixi() {
-        userName = document.getElementById('name-in').value.trim();
-        if(!userName) return alert("Vui lòng nhập tên!");
+    function confirmIdentity() {
+        const input = document.getElementById('input-user');
+        const name = input.value.trim();
+        if(name.length < 2) return alert("Vui lòng nhập tên của bạn!");
+        savedName = name;
         document.getElementById('step-name').style.display = 'none';
         document.getElementById('step-lixi').style.display = 'block';
+        document.getElementById('hello-user').innerText = "Chào " + savedName + "!";
     }
 
-    function openMe() {
-        const env = document.getElementById('env');
+    function handleOpen() {
+        const env = document.getElementById('lixi-envelope');
         if(env.classList.contains('open')) return;
 
-        // TỶ LỆ CHUẨN CỦA BẠN
         const r = Math.random() * 100;
-        let finalAmt = "";
-        if(r <= 10) finalAmt = "50.000đ";
-        else if(r <= 22) finalAmt = "36.000đ";
-        else if(r <= 35) finalAmt = "20.000đ";
-        else if(r <= 53) finalAmt = "10.000đ";
-        else if(r <= 78) finalAmt = "2.000đ";
-        else finalAmt = "1.000đ";
+        let money = "";
+        if(r <= 10) money = "50.000đ";
+        else if(r <= 22) money = "36.000đ";
+        else if(r <= 35) money = "20.000đ";
+        else if(r <= 53) money = "10.000đ";
+        else if(r <= 78) money = "2.000đ";
+        else money = "1.000đ";
 
-        const wishes = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào", "Tấn Tài Tấn Lộc"];
-        const finalWish = wishes[Math.floor(Math.random()*wishes.length)];
+        const wishes = ["Vạn Sự Như Ý", "Phát Tài Phát Lộc", "Tấn Tài Tấn Lộc", "An Khang Thịnh Vượng"];
+        const wish = wishes[Math.floor(Math.random() * wishes.length)];
 
         env.classList.add('open');
-        document.getElementById('amt').innerText = finalAmt;
-        document.getElementById('wish').innerText = finalWish;
+        document.getElementById('res-amount').innerText = money;
+        document.getElementById('res-wish').innerText = wish;
 
-        // BẮN PHÁO HOA
-        confetti({
-            particleCount: 150,
-            spread: 70,
-            origin: { y: 0.6 },
-            colors: ['#f1c40f', '#d63031', '#ffffff']
-        });
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#f1c40f', '#d63031'] });
 
-        // Gửi Firebase
-        db.ref('lixi_2026').push({ n: userName, a: finalAmt, t: Date.now() });
-        localStorage.setItem('tet2026', JSON.stringify({n: userName, a: finalAmt}));
+        db.ref('lixi_data').push({ name: savedName, amount: money, time: Date.now() });
+        localStorage.setItem('lixi_done_2026', JSON.stringify({n: savedName, a: money, w: wish}));
     }
 
-    // Load Lịch sử Realtime
-    db.ref('lixi_2026').limitToLast(10).on('value', snap => {
-        const list = document.getElementById('hist-list');
+    db.ref('lixi_data').limitToLast(12).on('value', snap => {
+        const list = document.getElementById('log-list');
         list.innerHTML = "";
         const data = snap.val();
         if(data) {
-            Object.values(data).reverse().forEach(v => {
-                list.innerHTML += `<div class="history-item">🧧 <b>${v.n}</b> vừa nhận được <b>${v.a}</b></div>`;
+            Object.values(data).reverse().forEach(item => {
+                list.innerHTML += `<div class="history-item"><span class="user-tag">★ ${item.name}</span><span>vừa nhận ${item.amount}</span></div>`;
             });
         }
     });
 
-    // Hiệu ứng cánh hoa rơi (Background)
+    // Hiệu ứng hoa rơi
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let particles = [];
+    let flowers = [];
     class Flower {
         constructor() { this.reset(); this.y = Math.random()*canvas.height; }
-        reset() { this.x = Math.random()*canvas.width; this.y = -20; this.s = Math.random()*5+2; this.v = Math.random()*1+0.5; this.c = Math.random()>0.5?'#ffb7c5':'#f1c40f'; }
+        reset() { this.x = Math.random()*canvas.width; this.y = -20; this.s = Math.random()*4+2; this.v = Math.random()*1+0.5; this.c = Math.random()>0.5?'#ffb7c5':'#f1c40f'; }
+        update() { this.y += this.v; this.x += Math.sin(this.y/40); if(this.y > canvas.height) this.reset(); }
         draw() { ctx.fillStyle = this.c; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
-        update() { this.y += this.v; this.x += Math.sin(this.y/30); if(this.y > canvas.height) this.reset(); }
     }
-    for(let i=0; i<60; i++) particles.push(new Flower());
-    function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(animate); }
-    animate();
-
-    // Check trạng thái cũ
-    window.onload = () => {
-        const saved = localStorage.getItem('tet2026');
-        if(saved) {
-            const d = JSON.parse(saved);
-            goLixi();
-            document.getElementById('env').classList.add('open');
-            document.getElementById('amt').innerText = d.a;
-            document.getElementById('wish').innerText = "Chúc Mừng Năm Mới!";
-            document.getElementById('name-in').value = d.n;
-        }
-    }
+    for(let i=0; i<50; i++) flowers.push(new Flower());
+    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); flowers.forEach(f=>{f.draw(); f.update();}); requestAnimationFrame(anim); }
+    anim();
 </script>
 </body>
 </html>
