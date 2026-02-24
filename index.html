@@ -8,122 +8,42 @@
     <style>
         :root { --gold: #f1c40f; --red: #e74c3c; --dark: #0f0f0f; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; background: var(--dark); color: white; 
-            font-family: 'Montserrat', sans-serif; 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; overflow: hidden;
-            background: radial-gradient(circle, #2c0000 0%, #0a0a0a 100%);
-        }
-
-        /* Hiệu ứng hoa mai rơi */
+        body { margin: 0; background: var(--dark); color: white; font-family: 'Montserrat', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; background: radial-gradient(circle, #2c0000 0%, #0a0a0a 100%); }
         #blossom-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-
-        /* Lồng đèn trang trí */
-        .lantern { 
-            position: absolute; top: -10px; width: 50px; height: 70px; 
-            background: #d63031; border-radius: 25px; 
-            box-shadow: 0 0 30px rgba(214, 48, 49, 0.5); 
-            animation: swing 3s ease-in-out infinite; z-index: 5;
-            border: 2px solid var(--gold);
-        }
-        .lantern::after { content: "🧧"; position: absolute; bottom: -25px; left: 12px; font-size: 20px; }
-        .lantern-left { left: 5%; }
-        .lantern-right { right: 5%; }
-        @keyframes swing { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
-
-        /* Vùng nội dung chính (Đã xóa khung trắng) */
         .container { position: relative; z-index: 10; text-align: center; width: 100%; max-width: 400px; }
-        
-        .header { margin-bottom: 20px; }
-        .title { 
-            font-family: 'Dancing Script', cursive; font-size: 4rem; 
-            color: var(--gold); margin: 0; 
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
-        }
-        .year { font-size: 1rem; letter-spacing: 8px; color: #fff; opacity: 0.7; font-weight: 900; }
-
-        /* Bao lì xì */
-        .envelope {
-            position: relative; width: 220px; height: 320px; margin: 0 auto;
-            cursor: pointer; transition: transform 0.3s;
-        }
-        .envelope:active { transform: scale(0.95); }
-        
-        .envelope-img { 
-            width: 100%; height: 100%; 
-            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg');
-            background-size: cover; background-position: center;
-            border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            border: 2px solid rgba(241, 196, 15, 0.4);
-            transition: 0.8s cubic-bezier(.5,0,.2,1);
-        }
-
-        /* Kết quả số tiền (Xóa thẻ trắng) */
-        .result {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            width: 100%; z-index: 100; opacity: 0; transition: 0.8s cubic-bezier(.17,.67,.41,1.18);
-            pointer-events: none;
-        }
-
+        .title { font-family: 'Dancing Script', cursive; font-size: 4rem; color: var(--gold); margin: 0; text-shadow: 0 0 20px rgba(241, 196, 15, 0.8); }
+        .envelope { position: relative; width: 220px; height: 320px; margin: 0 auto; cursor: pointer; transition: transform 0.3s; }
+        .envelope-img { width: 100%; height: 100%; background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg'); background-size: cover; background-position: center; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 2px solid rgba(241, 196, 15, 0.4); transition: 0.8s cubic-bezier(.5,0,.2,1); }
+        .result { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 100%; z-index: 100; opacity: 0; transition: 0.8s cubic-bezier(.17,.67,.41,1.18); pointer-events: none; }
         .opened .envelope-img { transform: translateY(100px) rotate(-10deg) scale(0.7); filter: brightness(0.2) blur(5px); opacity: 0.5; }
         .opened .result { transform: translate(-50%, -80%) scale(1.5); opacity: 1; }
-
-        .amount { 
-            font-size: 3rem; font-weight: 900; color: #fff; 
-            text-shadow: 0 0 10px var(--gold), 0 0 30px var(--gold), 0 0 60px var(--gold);
-            margin: 0;
-        }
-        .wish { font-family: 'Dancing Script'; font-size: 2rem; color: var(--gold); margin-top: 5px; }
-
+        .amount { font-size: 3rem; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--gold), 0 0 30px var(--gold); margin: 0; }
         .hint { margin-top: 40px; font-size: 0.8rem; color: var(--gold); letter-spacing: 1px; animation: flash 2s infinite; }
         @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .petal { 
-            position: absolute; background: #f1c40f; 
-            border-radius: 150% 0 150% 0; 
-            animation: falling linear infinite; 
-            filter: drop-shadow(0 0 5px #f1c40f);
-        }
-        @keyframes falling {
-            0% { transform: translateY(-10vh) rotate(0deg); }
-            100% { transform: translateY(110vh) rotate(720deg); }
-        }
+        .petal { position: absolute; background: #f1c40f; border-radius: 150% 0 150% 0; animation: falling linear infinite; }
+        @keyframes falling { 0% { transform: translateY(-10vh) rotate(0deg); } 100% { transform: translateY(110vh) rotate(720deg); } }
     </style>
 </head>
 <body>
 
 <div id="blossom-container"></div>
-<div class="lantern lantern-left"></div>
-<div class="lantern lantern-right"></div>
-
 <div class="container">
-    <div class="header">
-        <h1 class="title">Lộc Xuân</h1>
-        <div class="year">ẤT TỴ 2026</div>
-    </div>
-
+    <h1 class="title">Lộc Xuân</h1>
     <div class="envelope" id="lixi-trigger" onclick="openLixi()">
         <div class="envelope-img"></div>
         <div class="result">
             <h2 class="amount" id="res-amount">0đ</h2>
-            <div class="wish" id="res-wish">Vạn Sự Như Ý</div>
+            <div style="font-family: 'Dancing Script'; font-size: 2rem; color: var(--gold);">Vạn Sự Như Ý</div>
         </div>
     </div>
-
     <p id="hint" class="hint">CHẠM ĐỂ NHẬN LỘC MAY MẮN</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
 <script>
-    // Kiểm tra trạng thái đã mở chưa
     window.onload = function() {
         const savedMoney = localStorage.getItem('lixi_2026_amount');
-        if (savedMoney) {
-            showResult(savedMoney);
-        }
+        if (savedMoney) showResult(savedMoney);
         createPetals();
     };
 
@@ -133,26 +53,24 @@
         const r = Math.random() * 100;
         let money = "";
         
-        if (r <= 10) money = "50.000đ";
-        else if (r <= 24) money = "36.000đ";
-        else if (r <= 41) money = "20.000đ";
-        else if (r <= 61) money = "10.000đ";
-        else if (r <= 80) money = "5.000đ";
-        else money = "2.000đ";
+        // Tỷ lệ mới: 1k, 2k, 5k, 10k chiếm đa số
+        if (r <= 25) money = "1.000đ";       // 25% trúng 1k
+        else if (r <= 50) money = "2.000đ";  // 25% trúng 2k
+        else if (r <= 70) money = "5.000đ";  // 20% trúng 5k
+        else if (r <= 85) money = "10.000đ"; // 15% trúng 10k
+        else if (r <= 92) money = "20.000đ"; // 7% trúng 20k
+        else if (r <= 97) money = "36.000đ"; // 5% trúng 36k
+        else money = "50.000đ";              // 3% trúng 50k (Hiếm)
 
         localStorage.setItem('lixi_2026_amount', money);
         showResult(money);
-        fireConfetti();
+        confetti({ particleCount: 200, spread: 90, origin: { y: 0.7 } });
     }
 
     function showResult(money) {
         document.getElementById('res-amount').innerText = money;
         document.getElementById('lixi-trigger').classList.add('opened');
         document.getElementById('hint').innerText = "BẠN ĐÃ NHẬN LỘC XUÂN!";
-    }
-
-    function fireConfetti() {
-        confetti({ particleCount: 200, spread: 90, origin: { y: 0.7 } });
     }
 
     function createPetals() {
