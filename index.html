@@ -25,19 +25,12 @@
 
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: 1; pointer-events: none; }
 
-        .decor-tree {
-            position: fixed; width: 250px; height: 250px; z-index: 2; pointer-events: none;
-            background-size: contain; background-repeat: no-repeat; opacity: 0.8;
-        }
-        .cherry-top { top: 0; left: 0; background-image: url('https://png.pngtree.com/png-clipart/20230113/ourmid/pngtree-cherry-blossom-flowers-branch-illustration-png-image_6561571.png'); }
-        .apricot-bot { bottom: 0; right: 0; background-image: url('https://png.pngtree.com/png-clipart/20221223/ourmid/pngtree-yellow-apricot-flower-with-buds-in-tet-holiday-vietnam-png-image_6534299.png'); }
-
         .premium-card {
             position: relative; z-index: 10; width: 350px;
             background: var(--glass); backdrop-filter: blur(20px);
             border: 2px solid var(--gold); border-radius: 30px;
             padding: 30px; text-align: center;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8), 0 0 20px rgba(241, 196, 15, 0.2);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
         }
 
         .title { font-family: 'Dancing Script', cursive; font-size: 3rem; color: var(--gold); margin: 0; }
@@ -55,42 +48,40 @@
         }
 
         #step-lixi { display: none; }
-        .envelope {
-            width: 150px; height: 220px; background: linear-gradient(145deg, #d63031, #a51e1e);
-            border-radius: 15px; margin: 40px auto; position: relative; cursor: pointer;
-            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        
+        /* GIAO DIỆN BAO LÌ XÌ MỚI */
+        .envelope-wrapper {
+            position: relative; width: 180px; height: 260px; margin: 20px auto;
+            cursor: pointer; transition: 0.5s;
         }
 
-        /* --- FIX LỖI HÌNH TAM GIÁC --- */
-        .flap {
-            position: absolute; top: 0; width: 100%; height: 90px;
-            background: #901414; clip-path: polygon(0 0, 100% 0, 50% 100%);
-            z-index: 10; transition: 0.6s ease; border-bottom: 1.5px solid var(--gold);
-            transform-origin: top;
-        }
-        .open .flap { 
-            transform: rotateX(180deg); 
-            opacity: 0; /* Xóa hẳn tam giác khi đã mở để không che chữ */
-            z-index: 1; 
+        .envelope-img {
+            width: 100%; height: 100%;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhWWhCfxtA3XE4we_kQTJFAPA33F0GS3VwD05ac9fPx1uOZXNaFFrzA4NL3HI7kxrOV-wQ52vDx8uGUBPLHwcHd0FtCNeu4D_kYCWIHyeP-yrsK5k3hgrQMHgs4YEnTxj_n-VXbmB6qIES4RieBB85ElJ_4fd6u0_H9LnUvvUHiz4eoaxIa887oz69f-HU/w400/(%20Anhpng.com%20)%20-%20LIXI%2011.jpg');
+            background-size: cover; background-position: center;
+            border-radius: 15px; z-index: 5; position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: 0.5s;
         }
 
         .money-card {
-            position: absolute; top: 5%; left: 5%; width: 90%; height: 90%;
+            position: absolute; top: 10%; left: 5%; width: 90%; height: 80%;
             background: #fff; border-radius: 10px; color: #222;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 0; transition: 0.8s; z-index: 5; /* Nằm dưới nắp khi chưa mở */
+            opacity: 0; transition: 0.8s ease-out; z-index: 1;
         }
+
+        /* Khi mở: Đẩy bao lì xì xuống, đẩy tờ tiền lên */
+        .open .envelope-img { transform: translateY(40px); opacity: 0.7; }
         .open .money-card { 
             opacity: 1; 
-            transform: translateY(-130px); /* Đẩy tiền lên cao hơn */
-            z-index: 20; /* Nằm trên cùng khi đã mở */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            transform: translateY(-130px); 
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        /* --- END FIX --- */
 
-        .amount { font-size: 1.8rem; font-weight: 800; color: #27ae60; margin: 0; }
-        .wish { font-family: 'Dancing Script'; font-size: 1.3rem; color: var(--red-tet); font-weight: bold; margin-top: 5px; }
+        .amount { font-size: 2rem; font-weight: 800; color: #27ae60; margin: 0; }
+        .wish { font-family: 'Dancing Script'; font-size: 1.4rem; color: var(--red-tet); font-weight: bold; margin-top: 10px; }
 
         .history-box {
             background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;
@@ -106,8 +97,6 @@
 <body>
 
 <canvas id="bg-canvas"></canvas>
-<div class="decor-tree cherry-top"></div>
-<div class="decor-tree apricot-bot"></div>
 
 <div class="premium-card">
     <div class="title">Lộc Xuân</div>
@@ -121,16 +110,18 @@
 
     <div id="step-lixi">
         <div id="hello-user" style="color:var(--gold); font-weight: 600; margin-bottom: 10px;"></div>
-        <div class="envelope" id="lixi-envelope" onclick="handleOpen()">
-            <div class="flap"></div>
-            <div style="position:absolute; bottom:20px; width:100%; text-align:center; font-size:45px;">🧧</div>
+        
+        <div class="envelope-wrapper" id="lixi-envelope" onclick="handleOpen()">
+            <div class="envelope-img"></div>
+            
             <div class="money-card">
-                <span style="font-size: 0.6rem; color: #999; font-weight: 800;">CHÚC MỪNG NĂM MỚI</span>
+                <span style="font-size: 0.7rem; color: #999; font-weight: 800; letter-spacing: 1px;">CHÚC MỪNG NĂM MỚI</span>
                 <h2 class="amount" id="res-amount">0đ</h2>
                 <div class="wish" id="res-wish"></div>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=45x45&data=Tet2026" style="margin-top:10px; opacity:0.5;">
+                <div style="margin-top: 15px; font-size: 20px;">🧧</div>
             </div>
         </div>
+        <p style="font-size: 0.7rem; color: #666;">Chạm vào bao lì xì để mở</p>
     </div>
 
     <div class="history-box">
@@ -141,7 +132,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-    // Cấu hình Firebase
+    // Firebase Config (Thay bằng của bạn)
     const firebaseConfig = { databaseURL: "https://PROJECT-CUA-BAN.firebaseio.com" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -184,31 +175,35 @@
         localStorage.setItem('lixi_done_2026', JSON.stringify({n: savedName, a: money, w: wish}));
     }
 
-    db.ref('lixi_data').limitToLast(12).on('value', snap => {
+    // Load lịch sử
+    db.ref('lixi_data').limitToLast(10).on('value', snap => {
         const list = document.getElementById('log-list');
         list.innerHTML = "";
         const data = snap.val();
         if(data) {
             Object.values(data).reverse().forEach(item => {
-                list.innerHTML += `<div class="history-item"><span class="user-tag">★ ${item.name}</span><span>vừa nhận ${item.amount}</span></div>`;
+                list.innerHTML += `<div class="history-item"><span class="user-tag">★ ${item.name}</span><span>${item.amount}</span></div>`;
             });
         }
     });
 
-    // Hiệu ứng hoa rơi
+    // Background pháo hoa giấy nhỏ
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    let flowers = [];
-    class Flower {
-        constructor() { this.reset(); this.y = Math.random()*canvas.height; }
-        reset() { this.x = Math.random()*canvas.width; this.y = -20; this.s = Math.random()*4+2; this.v = Math.random()*1+0.5; this.c = Math.random()>0.5?'#ffb7c5':'#f1c40f'; }
-        update() { this.y += this.v; this.x += Math.sin(this.y/40); if(this.y > canvas.height) this.reset(); }
-        draw() { ctx.fillStyle = this.c; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
+    let particles = [];
+    function create() {
+        if(particles.length < 50) particles.push({x:Math.random()*canvas.width, y:-10, s:Math.random()*3+1, v:Math.random()*2+1, c:Math.random()>0.5?'#f1c40f':'#d63031'});
     }
-    for(let i=0; i<50; i++) flowers.push(new Flower());
-    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); flowers.forEach(f=>{f.draw(); f.update();}); requestAnimationFrame(anim); }
-    anim();
+    function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles.forEach((p,i) => {
+            p.y += p.v; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 7); ctx.fill();
+            if(p.y > canvas.height) particles.splice(i,1);
+        });
+        create(); requestAnimationFrame(draw);
+    }
+    draw();
 </script>
 </body>
 </html>
