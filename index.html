@@ -33,7 +33,7 @@
         .lantern-right { right: 5%; }
         @keyframes swing { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
 
-        /* Vùng nội dung chính */
+        /* Vùng nội dung chính (Đã xóa khung trắng) */
         .container { position: relative; z-index: 10; text-align: center; width: 100%; max-width: 400px; }
         
         .header { margin-bottom: 20px; }
@@ -41,7 +41,6 @@
             font-family: 'Dancing Script', cursive; font-size: 4rem; 
             color: var(--gold); margin: 0; 
             text-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
-            filter: drop-shadow(2px 4px 6px black);
         }
         .year { font-size: 1rem; letter-spacing: 8px; color: #fff; opacity: 0.7; font-weight: 900; }
 
@@ -61,7 +60,7 @@
             transition: 0.8s cubic-bezier(.5,0,.2,1);
         }
 
-        /* Kết quả số tiền */
+        /* Kết quả số tiền (Xóa thẻ trắng) */
         .result {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
             width: 100%; z-index: 100; opacity: 0; transition: 0.8s cubic-bezier(.17,.67,.41,1.18);
@@ -81,7 +80,6 @@
         .hint { margin-top: 40px; font-size: 0.8rem; color: var(--gold); letter-spacing: 1px; animation: flash 2s infinite; }
         @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Cánh hoa mai */
         .petal { 
             position: absolute; background: #f1c40f; 
             border-radius: 150% 0 150% 0; 
@@ -120,60 +118,54 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    // Tạo hiệu ứng cánh hoa rơi rải rác
-    const container = document.getElementById('blossom-container');
-    const petalCount = 35;
-    for (let i = 0; i < petalCount; i++) {
-        let petal = document.createElement('div');
-        petal.className = 'petal';
-        petal.style.left = Math.random() * 100 + 'vw';
-        let size = Math.random() * 8 + 6 + 'px';
-        petal.style.width = size;
-        petal.style.height = size;
-        petal.style.animationDuration = Math.random() * 3 + 4 + 's';
-        petal.style.animationDelay = Math.random() * 5 + 's';
-        petal.style.opacity = Math.random();
-        container.appendChild(petal);
-    }
+    // Kiểm tra trạng thái đã mở chưa
+    window.onload = function() {
+        const savedMoney = localStorage.getItem('lixi_2026_amount');
+        if (savedMoney) {
+            showResult(savedMoney);
+        }
+        createPetals();
+    };
 
     function openLixi() {
-        const trigger = document.getElementById('lixi-trigger');
-        if(trigger.classList.contains('opened')) return;
+        if(localStorage.getItem('lixi_2026_amount')) return;
 
-        // --- XÁC SUẤT CHUẨN ---
         const r = Math.random() * 100;
         let money = "";
         
-        if (r <= 10) money = "50.000đ";      // 10%
-        else if (r <= 24) money = "36.000đ"; // 14%
-        else if (r <= 41) money = "20.000đ"; // 17%
-        else if (r <= 61) money = "10.000đ"; // 20%
-        else if (r <= 80) money = "5.000đ";  // 19%
-        else money = "2.000đ";               // 20%
+        if (r <= 10) money = "50.000đ";
+        else if (r <= 24) money = "36.000đ";
+        else if (r <= 41) money = "20.000đ";
+        else if (r <= 61) money = "10.000đ";
+        else if (r <= 80) money = "5.000đ";
+        else money = "2.000đ";
 
-        const wishes = ["Vạn Sự Như Ý", "Tấn Tài Tấn Lộc", "An Khang Thịnh Vượng", "Phát Tài Phát Lộc", "Sức Khỏe Dồi Dào"];
-        
+        localStorage.setItem('lixi_2026_amount', money);
+        showResult(money);
+        fireConfetti();
+    }
+
+    function showResult(money) {
         document.getElementById('res-amount').innerText = money;
-        document.getElementById('res-wish').innerText = wishes[Math.floor(Math.random() * wishes.length)];
-        
-        trigger.classList.add('opened');
-        document.getElementById('hint').style.display = "none";
+        document.getElementById('lixi-trigger').classList.add('opened');
+        document.getElementById('hint').innerText = "BẠN ĐÃ NHẬN LỘC XUÂN!";
+    }
 
-        // Bắn pháo hoa giấy cực mạnh
-        var count = 200;
-        var defaults = { origin: { y: 0.7 } };
+    function fireConfetti() {
+        confetti({ particleCount: 200, spread: 90, origin: { y: 0.7 } });
+    }
 
-        function fire(particleRatio, opts) {
-          confetti(Object.assign({}, defaults, opts, {
-            particleCount: Math.floor(count * particleRatio)
-          }));
+    function createPetals() {
+        const container = document.getElementById('blossom-container');
+        for (let i = 0; i < 35; i++) {
+            let petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            let size = Math.random() * 8 + 6 + 'px';
+            petal.style.width = size; petal.style.height = size;
+            petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+            container.appendChild(petal);
         }
-
-        fire(0.25, { spread: 26, startVelocity: 55 });
-        fire(0.2, { spread: 60 });
-        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-        fire(0.1, { spread: 120, startVelocity: 45 });
     }
 </script>
 </body>
